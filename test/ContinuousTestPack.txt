@@ -1,3 +1,5 @@
 TestHello.hpp
 TestWritingTests.hpp
 TestRunningDeltaNotchSimulationsTutorial1.hpp
+TestRunningDeltaNotchSimulationsTutorial8x8Mesh.hpp
+TestRunningDeltaNotchSimulationsTutorial7x7Periodic.hpp
