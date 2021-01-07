@@ -7,3 +7,6 @@ TestRunningDeltaNotchSimulationsTutorial7x7PeriodicAdjusted.hpp
 TestDeltaNotchOdeSystemAdjusted.hpp
 TestDeltaNotchOdeSystemSlimi.hpp
 TestDeltaNotch7x7PeriodicSlimi.hpp
+TestDeltaNotch12x12PeriodicSlimi.hpp
+TestDeltaNotchReporterOdeSystemLi.hpp
+TestDeltaNotchReporter12x12PeriodicLi.hpp

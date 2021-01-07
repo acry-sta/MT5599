@@ -105,7 +105,7 @@ void DeltaNotchTrackingModifierWithMeanNotch<DIM>::UpdateCellData(AbstractCellPo
                 double this_delta = p_cell->GetCellData()->GetItem("delta");
                 mean_notch += this_notch/neighbour_indices.size();
                 mean_delta += this_delta/neighbour_indices.size();
-            }
+            } 
             cell_iter->GetCellData()->SetItem("mean notch", mean_notch);
             cell_iter->GetCellData()->SetItem("mean delta", mean_delta);
         }

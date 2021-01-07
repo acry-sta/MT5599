@@ -260,7 +260,7 @@ public:
 
         OffLatticeSimulation<2> simulator(cell_population);
         simulator.SetOutputDirectory("Node7x7Slimi");
-        simulator.SetSamplingTimestepMultiple(20);
+        simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(20.0);
 
         /* Again we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/

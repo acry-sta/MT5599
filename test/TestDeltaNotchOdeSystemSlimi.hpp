@@ -69,9 +69,11 @@ public:
         OdeSolution solutions;
 
         std::vector<double> initial_conditions = ode_system.GetInitialConditions();
+        unsigned number_of_parameters = ode_system.GetNumberOfParameters();
 
         TS_ASSERT_DELTA(initial_conditions[0], 1.0, 1e-6);
         TS_ASSERT_DELTA(initial_conditions[1], 1.0, 1e-6);
+        TS_ASSERT_DELTA(number_of_parameters, 2, 1e-6);
 
         Timer::Reset();
         solutions = cvode_solver.Solve(&ode_system, initial_conditions, 0.0, 100.0, h_value, h_value);
@@ -79,6 +81,7 @@ public:
 
         // Test solutions are OK for a small time increase...
         int end = solutions.rGetSolutions().size() - 1;
+        std::cout << "End time is:" << end << std::endl;
         // Tests the simulation is ending at the right time...(going into S phase at 7.8 hours)
         TS_ASSERT_DELTA(solutions.rGetTimes()[end], 100, 1e-2);
 
@@ -113,8 +116,13 @@ public:
             TS_ASSERT_DELTA(initial_conditions[0], 1.0, 1e-6);
             TS_ASSERT_DELTA(initial_conditions[1], 3.25, 1e-6);
 
-            ode_system.SetParameter("Mean Notch", 1.0);
-            ode_system.SetParameter("Mean Delta", 10.0);
+            ode_system.SetParameter(0, 1.0);
+            ode_system.SetParameter(1, 10.0);
+
+            double mean_notch = ode_system.GetParameter("Mean Notch");
+            double mean_delta = ode_system.GetParameter("Mean Delta");
+            std::cout << "Parameter Mean Notch is " << mean_notch <<std::endl;
+            std::cout << "Parameter Mean Delta is " << mean_delta <<std::endl;
 
             // Create an output archive
             std::ofstream ofs(archive_filename.c_str());

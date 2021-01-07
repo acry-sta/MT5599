@@ -99,6 +99,9 @@ void DeltaNotchSrnModelSlimi::UpdateDeltaNotch()
     assert(mpOdeSystem != nullptr);
     assert(mpCell != nullptr);
 
+    double mean_notch = mpCell->GetCellData()->GetItem("mean notch");
+    mpOdeSystem->SetParameter("Mean Notch", mean_notch);
+
     double mean_delta = mpCell->GetCellData()->GetItem("mean delta");
     mpOdeSystem->SetParameter("Mean Delta", mean_delta);
 }

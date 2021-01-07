@@ -75,9 +75,11 @@ void DeltaNotchOdeSystemSlimi::EvaluateYDerivatives(double time, const std::vect
     double mean_notch = this->mParameters[0]; // Shorthand for "this->mParameter("Mean Notch");"
     double mean_delta = this->mParameters[1]; // Shorthand for "this->mParameter("Mean Delta");"
 
-    // The next two lines define the ODE system by Sprinzak et al. (2011)
-    rDY[0] = notch*mean_delta/(0.01 + notch*mean_delta) - notch - notch*mean_delta - notch*delta;  // d[Notch]/dt
-    rDY[1] = - delta*(1 + mean_notch + notch);                   // d[Delta]/dt
+    // The next two lines define the ODE system by Collier et al. (1996)
+    // rDY[0] = mean_delta*mean_delta/(0.01 + mean_delta*mean_delta) - notch;  // d[Notch]/dt
+    // rDY[1] = 1.0/(1.0 + 1000.0*notch*notch) - delta;   
+    rDY[0] = 1.0 + 100.0*notch*mean_delta/(1000.0 + notch*mean_delta) - notch*(1.0 + mean_delta + delta/0.1);  // d[Notch]/dt
+    rDY[1] = 1.0 - delta*(1.0 + mean_notch + notch/0.1);                   // d[Delta]/dt
 }
 
 template<>
@@ -91,8 +93,6 @@ void CellwiseOdeSystemInformation<DeltaNotchOdeSystemSlimi>::Initialise()
     this->mVariableUnits.push_back("non-dim");
     this->mInitialConditions.push_back(0.0); // will be filled in later
 
-    // If this is ever not the first parameter change the line
-    // double mean_delta = this->mParameters[0]; in EvaluateYDerivatives().
     this->mParameterNames.push_back("Mean Notch");
     this->mParameterUnits.push_back("non-dim");
     
