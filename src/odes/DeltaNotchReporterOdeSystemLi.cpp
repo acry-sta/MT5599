@@ -81,7 +81,7 @@ void DeltaNotchReporterOdeSystemLi::EvaluateYDerivatives(double time, const std:
     // rDY[0] = mean_delta*mean_delta/(0.01 + mean_delta*mean_delta) - notch;  // d[Notch]/dt
     // rDY[1] = 1.0/(1.0 + 1000.0*notch*notch) - delta;   
     rDY[0] = 100.0 - notch - notch*mean_delta;  // d[Notch]/dt
-    rDY[1] = 10.0/(1.0 + reporter) - delta - delta*mean_notch;   // d[Delta]/dt
+    rDY[1] = 100.0/(1.0 + reporter) - delta - delta*mean_notch;   // d[Delta]/dt
     rDY[2] = 1000000.0*notch*mean_delta*notch*mean_delta*notch*mean_delta/(300000.0 + notch*mean_delta*notch*mean_delta*notch*mean_delta) - reporter;   // d[Reporter]/dt
 }
 

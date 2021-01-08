@@ -10,3 +10,4 @@ TestDeltaNotch7x7PeriodicSlimi.hpp
 TestDeltaNotch12x12PeriodicSlimi.hpp
 TestDeltaNotchReporterOdeSystemLi.hpp
 TestDeltaNotchReporter12x12PeriodicLi.hpp
+TestDeltaNotchReporter12x12PeriodicLimi.hpp
