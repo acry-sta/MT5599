@@ -78,7 +78,7 @@ void DeltaNotchOdeSystemSlimi::EvaluateYDerivatives(double time, const std::vect
     // The next two lines define the ODE system by Collier et al. (1996)
     // rDY[0] = mean_delta*mean_delta/(0.01 + mean_delta*mean_delta) - notch;  // d[Notch]/dt
     // rDY[1] = 1.0/(1.0 + 1000.0*notch*notch) - delta;   
-    rDY[0] = 1.0 + 100.0*notch*mean_delta/(1000.0 + notch*mean_delta) - notch*(1.0 + mean_delta + delta/0.1);  // d[Notch]/dt
+    rDY[0] = 1.0 + 100.0*notch*mean_delta*notch*mean_delta*notch*mean_delta/(10.0 + notch*mean_delta*notch*mean_delta*notch*mean_delta) - notch*(1.0 + mean_delta + delta/0.1);  // d[Notch]/dt
     rDY[1] = 1.0 - delta*(1.0 + mean_notch + notch/0.1);                   // d[Delta]/dt
 }
 

@@ -11,3 +11,6 @@ TestDeltaNotch12x12PeriodicSlimi.hpp
 TestDeltaNotchReporterOdeSystemLi.hpp
 TestDeltaNotchReporter12x12PeriodicLi.hpp
 TestDeltaNotchReporter12x12PeriodicLimi.hpp
+TestDeltaNotchReporter12x12PeriodicLiPrepattern.hpp
+TestDeltaNotch12x12PeriodicSlimiPrepatternStripes.hpp
+

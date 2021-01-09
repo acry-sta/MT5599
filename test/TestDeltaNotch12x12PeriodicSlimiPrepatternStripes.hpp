@@ -42,8 +42,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#ifndef TESTDELTANOTCH12x12PERIODICSLIMI_HPP_
-#define TESTDELTANOTCH12x12PERIODICSLIMI_HPP_
+#ifndef TESTDELTANOTCH12x12PERIODICSLIMIPREPATTERNSTRIPES_HPP_
+#define TESTDELTANOTCH12x12PERIODICSLIMIPREPATTERNSTRIPES_HPP_
 
 /*
  * = An example showing how to run Delta/Notch simulations =
@@ -113,7 +113,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Having included all the necessary header files, we proceed by defining the test class.
  */
-class TestDeltaNotch12x12PeriodicSlimi : public AbstractCellBasedTestSuite
+class TestDeltaNotch12x12PeriodicSlimiPrepatternStripes : public AbstractCellBasedTestSuite
 {
 public:
 
@@ -152,8 +152,14 @@ public:
 
             /* We choose to initialise the concentrations to random levels in each cell. */
             std::vector<double> initial_conditions;
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            if ((elem_index%4)<3){
+              initial_conditions.push_back(0.25*RandomNumberGenerator::Instance()->ranf());
+              initial_conditions.push_back(20.0*RandomNumberGenerator::Instance()->ranf());
+            }
+            else{
+              initial_conditions.push_back(20.0*RandomNumberGenerator::Instance()->ranf());
+              initial_conditions.push_back(0.25*RandomNumberGenerator::Instance()->ranf());
+            }
             DeltaNotchSrnModelSlimi* p_srn_model = new DeltaNotchSrnModelSlimi();
             p_srn_model->SetInitialConditions(initial_conditions);
 
@@ -177,8 +183,8 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Vertex12x12PeriodicSlimiKns10n3");
-        simulator.SetSamplingTimestepMultiple(50);
+        simulator.SetOutputDirectory("Vertex12x12PeriodicSlimiPrepatternStripes");
+        simulator.SetSamplingTimestepMultiple(40);
         simulator.SetEndTime(40.0);
 
         /* Then, we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
@@ -239,8 +245,14 @@ public:
 
             /* We choose to initialise the concentrations to random levels in each cell. */
             std::vector<double> initial_conditions;
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            if ((i%4)<3){
+              initial_conditions.push_back(0.25*RandomNumberGenerator::Instance()->ranf());
+              initial_conditions.push_back(20.0*RandomNumberGenerator::Instance()->ranf());
+            }
+            else{
+              initial_conditions.push_back(20.0*RandomNumberGenerator::Instance()->ranf());
+              initial_conditions.push_back(0.25*RandomNumberGenerator::Instance()->ranf());
+            }
             DeltaNotchSrnModelSlimi* p_srn_model = new DeltaNotchSrnModelSlimi();
             p_srn_model->SetInitialConditions(initial_conditions);
 
@@ -259,7 +271,7 @@ public:
         cell_population.AddCellWriter<CellAgesWriter>();
 
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Node12x12SlimiKns10n3");
+        simulator.SetOutputDirectory("Node12x12SlimiPrepatternStripes");
         simulator.SetSamplingTimestepMultiple(12);
         simulator.SetEndTime(40.0);
 
@@ -287,4 +299,4 @@ public:
      */
 };
 
-#endif /*TESTDELTANOTCH12x12PERIODICSLIMI_HPP_*/
+#endif /*TESTDELTANOTCH12x12PERIODICSLIMIPREPATTERNSTRIPES_HPP_*/
