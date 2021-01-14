@@ -61,6 +61,16 @@ DeltaNotchReporterProtrusionOdeSystemLimi::DeltaNotchReporterProtrusionOdeSystem
     this->mParameters.push_back(0.5); // protrusion-mediated mean notch initial value
     this->mParameters.push_back(0.5); // protrusion-mediated mean delta initial value
 
+    // the following parameters specify the protrusions; these should be possible to overwrite
+    // during setup of the test, however leaving their initialisation here is fine as well
+    this->mParameters.push_back(3.0); // protrusion length initial value
+    this->mParameters.push_back(2.0); // protrusion tip length initial value
+    
+    this->mParameters.push_back(0.5*M_PI); // protrusion angle initial value
+    this->mParameters.push_back(0.5*M_PI); // protrusion angular opening initial value
+    
+    this->mParameters.push_back(0.01); // protrusion angular activation threshold notch initial value
+
 
     if (stateVariables != std::vector<double>())
     {
@@ -79,19 +89,19 @@ void DeltaNotchReporterProtrusionOdeSystemLimi::EvaluateYDerivatives(double time
     double reporter = rY[2];
     double mean_notch = this->mParameters[0]; // Shorthand for "this->mParameter("Mean Notch");"
     double mean_delta = this->mParameters[1]; // Shorthand for "this->mParameter("Mean Delta");"
-    double protrusion_notch = this->mParameters[2]; // Shorthand for "this->mParameter("Mean Notch");"
-    double protrusion_delta = this->mParameters[3]; // Shorthand for "this->mParameter("Mean Delta");"
+    double protrusion_notch = this->mParameters[2]; // Shorthand for "this->mParameter("Protrusion Notch");"
+    double protrusion_delta = this->mParameters[3]; // Shorthand for "this->mParameter("Protrusion Delta");"
 
     // we allow for weighting of the different methods of delta and notch arriving at the cell
     // to account for possible differences in efficiency of signalling mechanisms; we denote wn
     // the weight for neighboring cell signals, and wp the weight for protrusion-mediated signalling. 
-    double weighted_delta_in = 1.0 * mean_notch + 0.1 * protrusion_notch
-    double weighted_notch_in = 1.0 * mean_delta + 0.1 * protrusion_delta 
+    double weighted_delta_in = 1.0 * mean_notch + 0.1 * protrusion_notch;
+    double weighted_notch_in = 1.0 * mean_delta + 0.1 * protrusion_delta; 
     
     // total amount of bound delta that leads 
     // weights qn and qp are bounded by wn and wp. qn/wn is the proportion of Delta molecules bound
     // in trans that leads to a Notch signal in the receiving cell
-    double weighted_delta_out = 0.01 * mean_delta + 0.025 * protrusion_delta
+    double weighted_delta_out = 0.01 * mean_delta + 0.025 * protrusion_delta;
 
     // The next two lines define the ODE system by Baum et al. (2016)
     rDY[0] = 100.0 - notch - notch*weighted_delta_in/2.0 - notch*delta/0.5;  // d[Notch]/dt
@@ -126,10 +136,19 @@ void CellwiseOdeSystemInformation<DeltaNotchReporterProtrusionOdeSystemLimi>::In
     this->mParameterNames.push_back("Protrusion Delta");
     this->mParameterUnits.push_back("non-dim");
 
-    this->mParameterNames.push_back("Protrusion Notch");
-    this->mParameterUnits.push_back("non-dim");
+    this->mParameterNames.push_back("Protrusion Length");
+    this->mParameterUnits.push_back("cell lengths");
     
-    this->mParameterNames.push_back("Protrusion Delta");
+    this->mParameterNames.push_back("Protrusion Tip Length");
+    this->mParameterUnits.push_back("cell lengths");
+
+    this->mParameterNames.push_back("Protrusion Angle");
+    this->mParameterUnits.push_back("rad");
+    
+    this->mParameterNames.push_back("Protrusion Angular Opening");
+    this->mParameterUnits.push_back("rad");
+
+    this->mParameterNames.push_back("Angular Activation Threshold");
     this->mParameterUnits.push_back("non-dim");
 
     this->mInitialised = true;

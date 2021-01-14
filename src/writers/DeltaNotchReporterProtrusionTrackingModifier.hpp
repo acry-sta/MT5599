@@ -108,6 +108,21 @@ public:
     void UpdateCellData(AbstractCellPopulation<DIM,DIM>& rCellPopulation);
 
     /**
+     * Helper method to set up the association between each cell and its protrusional neighbours
+     * 
+     * @param rCellPopulation reference to the cell population
+     */
+    void SetProtrusionNeighbours(AbstractCellPopulation<DIM,DIM>& rCellPopulation);
+
+    /**
+     * Helper method to get a pointer to the cell property ProtrusionContacts; this will make it easier
+     * to set and retrieve the cells that this cell is in protrusional contact with.
+     *
+     * @param p_cell pointer to cell, usually obtained by dereferencing cell index
+     */
+    boost::shared_ptr<ProtrusionContacts> GetProtrusionContactsReference(CellPtr p_cell);
+
+    /**
      * Overridden OutputSimulationModifierParameters() method.
      * Output any simulation modifier parameters to file.
      *

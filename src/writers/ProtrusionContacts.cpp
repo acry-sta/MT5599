@@ -39,17 +39,17 @@ ProtrusionContacts::~ProtrusionContacts()
 {
 }
 
-void ProtrusionContacts::SetProtrusionContacts(const std::set<unsigned> indices);
+void ProtrusionContacts::SetProtrusionContacts(const std::set<unsigned> indices)
 {
     mProtrusionContacts = indices;
 }
 
-double ProtrusionContacts::GetProtrusionContacts() const;
+std::set<unsigned> ProtrusionContacts::GetProtrusionContacts() const
 {
     return mProtrusionContacts;
 }
 
-unsigned ProtrusionContacts::GetNumItems() const
+unsigned ProtrusionContacts::GetNumProtrusionContacts() const
 {
     return mProtrusionContacts.size();
 }

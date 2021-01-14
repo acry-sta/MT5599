@@ -105,10 +105,10 @@ void DeltaNotchReporterProtrusionSrnModelLimi::UpdateDeltaNotchReporter()
     double mean_delta = mpCell->GetCellData()->GetItem("mean delta");
     mpOdeSystem->SetParameter("Mean Delta", mean_delta);
 
-    double mean_notch = mpCell->GetCellData()->GetItem("mean notch");
+    double protrusion_notch = mpCell->GetCellData()->GetItem("protrusion notch");
     mpOdeSystem->SetParameter("Protrusion Notch", protrusion_notch);
 
-    double mean_delta = mpCell->GetCellData()->GetItem("mean delta");
+    double protrusion_delta = mpCell->GetCellData()->GetItem("protrusion delta");
     mpOdeSystem->SetParameter("Protrusion Delta", protrusion_delta);
 }
 
@@ -159,6 +159,41 @@ double DeltaNotchReporterProtrusionSrnModelLimi::GetProtrusionMediatedDelta()
     assert(mpOdeSystem != nullptr);
     double mean_protrusion_delta = mpOdeSystem->GetParameter("Protrusion Delta");
     return mean_protrusion_delta;
+}
+
+double DeltaNotchReporterProtrusionSrnModelLimi::GetProtrusionLength()
+{
+    assert(mpOdeSystem != nullptr);
+    double protrusion_length = mpOdeSystem->GetParameter("Protrusion Length");
+    return protrusion_length;
+}
+
+double DeltaNotchReporterProtrusionSrnModelLimi::GetProtrusionTipLength()
+{
+    assert(mpOdeSystem != nullptr);
+    double protrusion_tip_length = mpOdeSystem->GetParameter("Protrusion Tip Length");
+    return protrusion_tip_length;
+}
+
+double DeltaNotchReporterProtrusionSrnModelLimi::GetProtrusionAngle()
+{
+    assert(mpOdeSystem != nullptr);
+    double protrusion_angle = mpOdeSystem->GetParameter("Protrusion Angle");
+    return protrusion_angle;
+}
+
+double DeltaNotchReporterProtrusionSrnModelLimi::GetProtrusionAngularOpening()
+{
+    assert(mpOdeSystem != nullptr);
+    double protrusion_angular_opening = mpOdeSystem->GetParameter("Protrusion Angular Opening");
+    return protrusion_angular_opening;
+}
+
+double DeltaNotchReporterProtrusionSrnModelLimi::GetAngularActivationThreshold()
+{
+    assert(mpOdeSystem != nullptr);
+    double angular_activation_threshold = mpOdeSystem->GetParameter("Angular Activation Threshold");
+    return angular_activation_threshold;
 }
 
 void DeltaNotchReporterProtrusionSrnModelLimi::OutputSrnModelParameters(out_stream& rParamsFile)

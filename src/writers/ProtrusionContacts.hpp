@@ -37,14 +37,12 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define PROTRUSIONCONTACTS_HPP_
 
 #include <boost/shared_ptr.hpp>
-#include <map>
-#include <string>
-#include <vector>
+#include <set>
 
 #include "AbstractCellProperty.hpp"
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
-#include <boost/serialization/map.hpp>
+#include <boost/serialization/set.hpp>
 #include "Exception.hpp"
 
 /**
@@ -65,7 +63,7 @@ private:
     /**
      * The set of protrusion contact indices.
      */
-    std::set<unsigned> mProtrusionContacts;
+    std::set<unsigned> mProtrusionContacts; 
 
     /** Needed for serialization. */
     friend class boost::serialization::access;
@@ -98,7 +96,7 @@ public:
     /**
      * @return data.
      */
-    double GetProtrusionContacts() const;
+    std::set<unsigned> GetProtrusionContacts() const;
 
     /**
      * @return number of contacts overall

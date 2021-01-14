@@ -39,7 +39,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "ChasteSerialization.hpp"
 #include <boost/serialization/base_object.hpp>
 
-#include "DeltaNotchReporterOdeSystemLimi.hpp"
+#include "DeltaNotchReporterProtrusionOdeSystemLimi.hpp"
 #include "AbstractOdeSrnModel.hpp"
 
 /**
@@ -112,11 +112,11 @@ public:
     void SimulateToCurrentTime();
 
     /**
-     * Update the current levels of Delta and Notch in the cell.
+     * Update the current levels of Delta, Notch, and Reporter in the cell.
      *
      * N.B. Despite the name, this doesn't update the levels of delta or notch, or compute mean levels.
      * It just copies the current mean delta from the CellData
-     * (set by DeltaNotchTrackingModifier) to the DeltaNotchOdeSystemSlimi.
+     * (set by DeltaNotchTrackingModifier) to the ode system file.
      *
      * \todo #2752 Improve the name of this method!
      */
@@ -141,7 +141,7 @@ public:
      * @return the current level of mean Notch in the neighbouring cells.
      *
      * N.B. This doesn't calculate anything, it just returns the parameter
-     * from the DeltaNotchOdeSystemSlimi.
+     * from the ode system file.
      */
     double GetMeanNeighbouringNotch();
 
@@ -149,7 +149,7 @@ public:
      * @return the current level of mean Delta in the neighbouring cells.
      *
      * N.B. This doesn't calculate anything, it just returns the parameter
-     * from the DeltaNotchOdeSystemSlimi.
+     * from the ode system file.
      */
     double GetMeanNeighbouringDelta();
 
@@ -157,7 +157,7 @@ public:
      * @return the current level of Notch received from cells in protrusional contact with this cell.
      *
      * N.B. This doesn't calculate anything, it just returns the parameter
-     * from the DeltaNotchOdeSystemSlimi.
+     * from the ode system file.
      */
     double GetProtrusionMediatedNotch();
 
@@ -165,9 +165,58 @@ public:
      * @return the current level of Delta received from cells in protrusional contact with this cell.
      *
      * N.B. This doesn't calculate anything, it just returns the parameter
-     * from the DeltaNotchOdeSystemSlimi.
+     * from the ode system file.
      */
     double GetProtrusionMediatedDelta();
+
+    /**
+     * @return the current level of mean Notch in the neighbouring cells.
+     *
+     * N.B. This doesn't calculate anything, it just returns the parameter
+     * from the ode system file.
+     */
+    
+    double GetProtrusionLength();
+
+    /**
+     * @return the tip area of the protrusion, which defines the space in which protrusion-mediated contact
+     * can occur. dl can vary between c>0 and l depending on model specifications - the biological reality has
+     * yet to be ascertained.
+     *
+     * N.B. This doesn't calculate anything, it just returns the parameter
+     * from the ode system file.
+     */
+    double GetProtrusionTipLength();
+
+    /**
+     * @return the engle of the cellular protrusion. This is relative to the axes of the whole mesh.
+     *
+     * N.B. This doesn't calculate anything, it just returns the parameter
+     * from the ode system file.
+     */
+    double GetProtrusionAngle();
+
+    /**
+     * @return the angular opening defines the arc of circle in which we assume the protrusions 
+     * jut out. This is in [0, pi] - note that for angular opening equal to pi, protrusions are 
+     * exerted in every direction.
+     *
+     * N.B. This doesn't calculate anything, it just returns the parameter
+     * from the ode system file.
+     */
+    double GetProtrusionAngularOpening();
+
+    /**
+     * @return the activation threshold for cells to be considered to be in protrusional contact. 
+     * This avoids geometrically calculating the overlap, and also allows us to require larger or 
+     * smaller amounts of overlap between cellular protrusions for contact to be considered established. 
+     * The way this activation threshold is implemented can take geometry into account specifically or
+     * more generally, which may impact the computation time/complexity of the program.
+     *
+     * N.B. This doesn't calculate anything, it just returns the parameter
+     * from the ode system file.
+     */
+    double GetAngularActivationThreshold();
 
     /**
      * Output SRN model parameters to file.
