@@ -40,7 +40,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <boost/serialization/base_object.hpp>
 
 #include "AbstractCellBasedSimulationModifier.hpp"
-#include "ProtrusionContacts.hpp"
+#include "CellProtrusionContacts.hpp"
 
 /**
  * A modifier class in which the mean levels of Delta in neighbouring cells
@@ -115,12 +115,12 @@ public:
     void SetProtrusionNeighbours(AbstractCellPopulation<DIM,DIM>& rCellPopulation);
 
     /**
-     * Helper method to get a pointer to the cell property ProtrusionContacts; this will make it easier
+     * Helper method to get a pointer to the cell property CellProtrusionContacts; this will make it easier
      * to set and retrieve the cells that this cell is in protrusional contact with.
      *
      * @param p_cell pointer to cell, usually obtained by dereferencing cell index
      */
-    boost::shared_ptr<ProtrusionContacts> GetProtrusionContactsReference(CellPtr p_cell);
+    boost::shared_ptr<CellProtrusionContacts> GetCellProtrusionContactsReference(CellPtr p_cell);
 
     /**
      * Overridden OutputSimulationModifierParameters() method.

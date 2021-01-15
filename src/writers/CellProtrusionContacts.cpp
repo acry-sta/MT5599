@@ -33,27 +33,31 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#include "ProtrusionContacts.hpp"
+#include "CellProtrusionContacts.hpp"
 
-ProtrusionContacts::~ProtrusionContacts()
+CellProtrusionContacts::CellProtrusionContacts()
 {
 }
 
-void ProtrusionContacts::SetProtrusionContacts(const std::set<unsigned> indices)
+CellProtrusionContacts::~CellProtrusionContacts()
 {
-    mProtrusionContacts = indices;
 }
 
-std::set<unsigned> ProtrusionContacts::GetProtrusionContacts() const
+void CellProtrusionContacts::SetCellProtrusionContacts(const std::set<unsigned> indices)
 {
-    return mProtrusionContacts;
+    mCellProtrusionContacts = indices;
 }
 
-unsigned ProtrusionContacts::GetNumProtrusionContacts() const
+std::set<unsigned> CellProtrusionContacts::GetCellProtrusionContacts() const
 {
-    return mProtrusionContacts.size();
+    return mCellProtrusionContacts;
+}
+
+unsigned CellProtrusionContacts::GetNumCellProtrusionContacts() const
+{
+    return mCellProtrusionContacts.size();
 }
 
 #include "SerializationExportWrapperForCpp.hpp"
 // Declare identifier for the serializer
-CHASTE_CLASS_EXPORT(ProtrusionContacts)
+CHASTE_CLASS_EXPORT(CellProtrusionContacts)

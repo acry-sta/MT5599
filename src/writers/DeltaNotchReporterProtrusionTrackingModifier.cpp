@@ -61,7 +61,7 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetupSolve(AbstractCellP
      * fully initialised by the time we enter the main time loop.
      */
 
-    // We first add the property ProtrusionContacts cells to each cell using the designated helper class
+    // We first add the property CellProtrusionContacts cells to each cell using the designated helper class
     SetProtrusionNeighbours(rCellPopulation);
 
     UpdateCellData(rCellPopulation);
@@ -98,14 +98,17 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::UpdateCellData(AbstractC
         // Get the set of neighbouring location indices
         std::set<unsigned> neighbour_indices = rCellPopulation.GetNeighbouringLocationIndices(*cell_iter);
         
-        // if (cell_iter->HasCellProperty<ProtrusionContacts>()) // isn't working? confused
-        // {
-        std::set<unsigned> protrusion_contact_indices = GetProtrusionContactsReference(*cell_iter)->GetProtrusionContacts();
-        // }
-        // else
-        // {
-        //     EXCEPTION("Protrusion Contacts cell property not implemented");
-        // }
+        // if (*cell_iter->HasCellProperty<CellProtrusionContacts>()) 
+        // p_cell->rGetCellPropertyCollection().HasProperty(p_wild_type) // isn't working? confused
+        // p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>()
+        if (*cell_iter->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>())
+        {
+        std::set<unsigned> protrusion_contact_indices = GetCellProtrusionContactsReference(*cell_iter)->GetCellProtrusionContacts();
+        }
+        else
+        {
+           EXCEPTION("Protrusion Contacts cell property not implemented");
+        }
         
         // Compute this cell's average neighbouring Notch and Delta concentration and store in CellData
         if (!neighbour_indices.empty())
@@ -184,7 +187,6 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
         double angular_activation_threshold = p_model->GetAngularActivationThreshold();
         // get location index of cell we are looking at
         unsigned index_A = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
-
         
         // Find the indices of the elements owned by this node
         for (typename AbstractCellPopulation<DIM>::Iterator possible_contact_cell_iter = rCellPopulation.Begin();
@@ -218,16 +220,16 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
                     }
                 }
             }
-            GetProtrusionContactsReference(*cell_iter)->SetProtrusionContacts(protrusion_contact_indices);
+            GetCellProtrusionContactsReference(*cell_iter)->SetCellProtrusionContacts(protrusion_contact_indices);
         }
     }
 }
 
 template<unsigned DIM>
-boost::shared_ptr<ProtrusionContacts> DeltaNotchReporterProtrusionTrackingModifier<DIM>::GetProtrusionContactsReference(CellPtr p_cell)
+boost::shared_ptr<CellProtrusionContacts> DeltaNotchReporterProtrusionTrackingModifier<DIM>::GetCellProtrusionContactsReference(CellPtr p_cell)
 {
-    CellPropertyCollection cell_protrusion_contacts_collection = p_cell->rGetCellPropertyCollection().GetPropertiesType<ProtrusionContacts>();
-    return boost::static_pointer_cast<ProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
+    CellPropertyCollection cell_protrusion_contacts_collection = p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
+    return boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
 }
 
 

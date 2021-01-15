@@ -33,8 +33,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
 
-#ifndef PROTRUSIONCONTACTS_HPP_
-#define PROTRUSIONCONTACTS_HPP_
+#ifndef CELLPROTRUSIONCONTACTS_HPP_
+#define CELLPROTRUSIONCONTACTS_HPP_
 
 #include <boost/shared_ptr.hpp>
 #include <set>
@@ -46,24 +46,24 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "Exception.hpp"
 
 /**
- * ProtrusionContacts cell proprty class.
+ * CellProtrusionContacts cell property class.
  *
  * This cell property allows each cell to store the indices of the cells it is in protrusion-mediated contact with,
  * based on a given length, angle, and angle of opening of a protrusion arc, as well as an activation threshold to
  * control for minimum overlap of protrusions, to be used in Delta Notch models. Protrusion details will be given in
  * the SRN model. Other classes may interrogate or modify the values stored in this class.
  *
- * Within the Cell constructor, an empty ProtrusionContacts object is created and passed to the Cell
- * (unless there is already a ProtrusionContacts object present in mCellPropertyCollection).
+ * Within the Cell constructor, an empty CellProtrusionContacts object is created and passed to the Cell
+ * (unless there is already a CellProtrusionContacts object present in mCellPropertyCollection).
  */
-class ProtrusionContacts : public AbstractCellProperty
+class CellProtrusionContacts : public AbstractCellProperty
 {
 private:
 
     /**
      * The set of protrusion contact indices.
      */
-    std::set<unsigned> mProtrusionContacts; 
+    std::set<unsigned> mCellProtrusionContacts; 
 
     /** Needed for serialization. */
     friend class boost::serialization::access;
@@ -77,7 +77,7 @@ private:
     void serialize(Archive & archive, const unsigned int version)
     {
         archive & boost::serialization::base_object<AbstractCellProperty>(*this);
-        archive & mProtrusionContacts;
+        archive & mCellProtrusionContacts;
     }
 
 public:
@@ -86,26 +86,32 @@ public:
      * We need the empty virtual destructor in this class to ensure Boost
      * serialization works correctly with static libraries.
      */
-    virtual ~ProtrusionContacts();
+    CellProtrusionContacts();
+   
+    /**
+     * We need the empty virtual destructor in this class to ensure Boost
+     * serialization works correctly with static libraries.
+     */
+    virtual ~CellProtrusionContacts();
 
     /**
      * This assigns the set of protrusion contacts. 
      */
-    void SetProtrusionContacts(const std::set<unsigned> indices);
+    void SetCellProtrusionContacts(const std::set<unsigned> indices);
 
     /**
      * @return data.
      */
-    std::set<unsigned> GetProtrusionContacts() const;
+    std::set<unsigned> GetCellProtrusionContacts() const;
 
     /**
      * @return number of contacts overall
      */
-    unsigned GetNumProtrusionContacts() const;
+    unsigned GetNumCellProtrusionContacts() const;
 };
 
 #include "SerializationExportWrapper.hpp"
 // Declare identifier for the serializer
-CHASTE_CLASS_EXPORT(ProtrusionContacts)
+CHASTE_CLASS_EXPORT(CellProtrusionContacts)
 
-#endif /* PROTRUSIONCONTACTS_HPP_ */
+#endif /* CELLPROTRUSIONCONTACTS_HPP_ */

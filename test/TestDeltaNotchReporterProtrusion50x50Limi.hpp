@@ -42,8 +42,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#ifndef TESTDELTANOTCHREPORTERPROTRUSION12x12PERIODICLIMI_HPP_
-#define TESTDELTANOTCHREPORTERPROTRUSION12x12PERIODICLIMI_HPP_
+#ifndef TESTDELTANOTCHREPORTERPROTRUSION50x50LIMI_HPP_
+#define TESTDELTANOTCHREPORTERPROTRUSION50x50LIMI_HPP_
 
 /*
  * = An example showing how to run Delta/Notch simulations =
@@ -113,7 +113,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Having included all the necessary header files, we proceed by defining the test class.
  */
-class TestDeltaNotchReporterProtrusion12x12PeriodicLimi : public AbstractCellBasedTestSuite
+class TestDeltaNotchReporterProtrusion50x50Limi : public AbstractCellBasedTestSuite
 {
 public:
 
@@ -132,31 +132,39 @@ public:
         /* We include the next line because Vertex simulations cannot be run in parallel */
         EXIT_IF_PARALLEL;
 
-        /* First we create a 7x7 cylindrical vertex mesh for periodicity in the x-direction. */
-        CylindricalHoneycombVertexMeshGenerator generator(12, 12);
-        Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
+        /* First we create a 50x50 vertex mesh to run our simulations in. A large mesh is required
+        for the patterning impact to appear. This may also be necessary for prepatterning as well. 
+        */
+        HoneycombVertexMeshGenerator generator(12, 12);
+        MutableVertexMesh<2,2>* p_mesh = generator.GetMesh();
+        
+        // // option to create a cylindrical vertex mesh for periodicity in the x-direction. 
+        // CylindricalHoneycombVertexMeshGenerator generator(50, 50);
+        // Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
 
         /* We then create some cells, each with a cell-cycle model, {{{UniformG1GenerationalCellCycleModel}}} and a subcellular reaction network model
-         * {{{DeltaNotchSrnModel}}}, which
-         * incorporates a Delta/Notch ODE system, here we use the hard coded initial conditions of 1.0 and 1.0.
+         * {{{DeltaNotchReporterProtrusionSrnModelLimi}}}, which
+         * incorporates a Delta/Notch/Reporter ODE system with protrusion and cis-inhibition, 
+         * here we use the hard coded initial conditions of 1.0 and 1.0.
          * In this example we choose to make each cell differentiated,
          * so that no cell division occurs. */
         std::vector<CellPtr> cells;
         MAKE_PTR(WildTypeCellMutationState, p_state);
         MAKE_PTR(DifferentiatedCellProliferativeType, p_diff_type);
-        MAKE_PTR(ProtrusionContactsCellProperty, p_protrusion_contacts);
-
+        MAKE_PTR(CellProtrusionContacts, p_protrusion_contacts);
 
         for (unsigned elem_index=0; elem_index<p_mesh->GetNumElements(); elem_index++)
         {
             UniformG1GenerationalCellCycleModel* p_cc_model = new UniformG1GenerationalCellCycleModel();
             p_cc_model->SetDimension(2);
 
-            /* We choose to initialise the concentrations to random levels in each cell. */
+            /* We choose to initialise the concentrations of Notch and Delta to random levels 
+            in each cell. Similarly the concentration of Reporter in each cell is randomly initialized, but
+            to a very low value.*/
             std::vector<double> initial_conditions;
             initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            initial_conditions.push_back(0.01*RandomNumberGenerator::Instance()->ranf());
             DeltaNotchReporterProtrusionSrnModelLimi* p_srn_model = new DeltaNotchReporterProtrusionSrnModelLimi();
             p_srn_model->SetInitialConditions(initial_conditions);
 
@@ -185,11 +193,11 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Vertex12x12PeriodicLimi");
-        simulator.SetSamplingTimestepMultiple(50);
-        simulator.SetEndTime(40.0);
+        simulator.SetOutputDirectory("Vertex12x12ProtrusionLimi");
+        simulator.SetSamplingTimestepMultiple(20);
+        simulator.SetEndTime(20.0);
 
-        /* Then, we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
+        /* Then, we define the modifier class, which automatically updates the properties of the cells and passes it to the simulation.*/
         MAKE_PTR(DeltaNotchReporterProtrusionTrackingModifier<2>, p_modifier);
         simulator.AddSimulationModifier(p_modifier);
 
@@ -203,4 +211,6 @@ public:
         simulator.Solve();
     }
 
-#endif /*TESTDELTANOTCHREPORTERPROTRUSION12x12PERIODICLIMI_HPP_*/
+};
+
+#endif /*TESTDELTANOTCHREPORTERPROTRUSION50x50LIMI_HPP_*/
