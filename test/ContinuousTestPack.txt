@@ -15,5 +15,6 @@ TestDeltaNotchReporter12x12PeriodicLiPrepattern.hpp
 TestDeltaNotch12x12PeriodicSlimiPrepatternStripes.hpp
 TestDeltaNotchReporterProtrusionOdeSystemLimi.hpp
 TestDeltaNotchReporterProtrusion50x50Limi.hpp
+TestCellProtrusionContacts.hpp
 
 

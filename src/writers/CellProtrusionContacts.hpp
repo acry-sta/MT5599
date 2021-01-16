@@ -81,12 +81,6 @@ private:
     }
 
 public:
-
-    /**
-     * We need the empty virtual destructor in this class to ensure Boost
-     * serialization works correctly with static libraries.
-     */
-    CellProtrusionContacts();
    
     /**
      * We need the empty virtual destructor in this class to ensure Boost

@@ -101,14 +101,14 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::UpdateCellData(AbstractC
         // if (*cell_iter->HasCellProperty<CellProtrusionContacts>()) 
         // p_cell->rGetCellPropertyCollection().HasProperty(p_wild_type) // isn't working? confused
         // p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>()
-        if (*cell_iter->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>())
-        {
+        // if (*cell_iter->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>())
+        // {
         std::set<unsigned> protrusion_contact_indices = GetCellProtrusionContactsReference(*cell_iter)->GetCellProtrusionContacts();
-        }
-        else
-        {
-           EXCEPTION("Protrusion Contacts cell property not implemented");
-        }
+        // }
+        // else
+        // {
+        //    EXCEPTION("Protrusion Contacts cell property not implemented");
+        // }
         
         // Compute this cell's average neighbouring Notch and Delta concentration and store in CellData
         if (!neighbour_indices.empty())
@@ -171,6 +171,9 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
 
     // get reference to mesh
     AbstractMesh<DIM, DIM>& r_mesh = rCellPopulation.rGetMesh();
+
+    // check that CellProtrusionContacts is a property used in this population
+    // boost::shared_ptr< CellPropertyRegistry > AbstractCellPopulation< ELEMENT_DIM, SPACE_DIM >::GetCellPropertyRegistry()	
     
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = rCellPopulation.Begin();
          cell_iter != rCellPopulation.End();
@@ -231,6 +234,12 @@ boost::shared_ptr<CellProtrusionContacts> DeltaNotchReporterProtrusionTrackingMo
     CellPropertyCollection cell_protrusion_contacts_collection = p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
     return boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
 }
+
+// template<unsigned DIM>
+// bool DeltaNotchReporterProtrusionTrackingModifier<DIM>::HasCellProtrusionContacts(CellPtr p_cell) const
+// {
+//     return 
+// }
 
 
 template<unsigned DIM>
