@@ -51,14 +51,64 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CellProtrusionContacts.hpp"
 #include "SmartPointers.hpp"
 
+#include "CheckpointArchiveTypes.hpp"
 #include "AbstractCellBasedTestSuite.hpp"
 #include "FakePetscSetup.hpp"
-
-#define NEW_PROP(type, name) boost::shared_ptr<AbstractCellProperty> name(new type)
 
 class TestCellProtrusionContacts : public AbstractCellBasedTestSuite
 {
 public:
+
+    void TestCellProtrusionContactsProperty()
+    {
+        MAKE_PTR(CellProtrusionContacts, p_property);
+
+        TS_ASSERT_EQUALS(p_property->GetCellCount(), 0u);
+        p_property->IncrementCellCount();
+        TS_ASSERT_EQUALS(p_property->GetCellCount(), 1u);
+        p_property->DecrementCellCount();
+        TS_ASSERT_EQUALS(p_property->GetCellCount(), 0u);
+        TS_ASSERT_THROWS_THIS(p_property->DecrementCellCount(),
+                "Cannot decrement cell count: no cells have this cell property");
+
+        TS_ASSERT_EQUALS(p_property->IsType<WildTypeCellMutationState>(), false);
+        TS_ASSERT_EQUALS(p_property->IsType<CellProtrusionContacts>(), true);
+
+        OutputFileHandler handler("archive", false);
+        std::string archive_filename = handler.GetOutputDirectoryFullPath() + "property.arch";
+
+        {
+            AbstractCellProperty* const p_const_property = new CellProtrusionContacts();
+            p_const_property->IncrementCellCount();
+
+            TS_ASSERT_EQUALS(p_const_property->GetCellCount(), 1u);
+            TS_ASSERT_THROWS_NOTHING(dynamic_cast<CellProtrusionContacts*>(p_const_property)->GetCellProtrusionContacts());
+
+            std::ofstream ofs(archive_filename.c_str());
+            boost::archive::text_oarchive output_arch(ofs);
+
+            output_arch << p_const_property;
+
+            delete p_const_property;
+        }
+
+        {
+            AbstractCellProperty* p_arch_property;
+
+            std::ifstream ifs(archive_filename.c_str());
+            boost::archive::text_iarchive input_arch(ifs);
+
+            input_arch >> p_arch_property;
+
+            TS_ASSERT_EQUALS(p_arch_property->GetCellCount(), 1u);
+
+            CellProtrusionContacts* p_real_property = dynamic_cast<CellProtrusionContacts*>(p_arch_property);
+            TS_ASSERT(p_real_property != NULL);
+
+            delete p_arch_property;
+        }
+    }
+
 
     void TestPropertyCollection()
     {
@@ -116,6 +166,11 @@ public:
         CellPropertyCollection properties = collection.GetPropertiesType<AbstractCellProperty>();
         TS_ASSERT_EQUALS(properties.GetSize(), 2u);
 
+        CellPropertyCollection cell_protrusion_contacts_collection = collection.GetPropertiesType<CellProtrusionContacts>();
+        unsigned size = cell_protrusion_contacts_collection.GetSize();
+        std::cout << "When added directly, collection has size: " << size;
+
+
         CellPropertyCollection mutations = collection.GetPropertiesType<AbstractCellMutationState>();
         TS_ASSERT_EQUALS(mutations.GetSize(), 1u);
         CellPropertyCollection::Iterator it = mutations.Begin();
@@ -131,38 +186,38 @@ public:
 
         boost::shared_ptr<AbstractCellProperty> p_healthy_state(CellPropertyRegistry::Instance()->Get<WildTypeCellMutationState>());
         boost::shared_ptr<AbstractCellProperty> p_type(CellPropertyRegistry::Instance()->Get<StemCellProliferativeType>());
-        // boost::shared_ptr<AbstractCellProperty> p_protrusion_contacts(CellPropertyRegistry::Instance()->Get<CellProtrusionContacts>());
-        MAKE_PTR(CellProtrusionContacts, p_protrusion_contacts);
-
+        boost::shared_ptr<AbstractCellProperty> p_protrusion_contacts(CellPropertyRegistry::Instance()->Get<CellProtrusionContacts>());
 
         FixedG1GenerationalCellCycleModel* p_cell_model = new FixedG1GenerationalCellCycleModel();
         CellPropertyCollection collection;
         collection.AddProperty(p_protrusion_contacts);
-        CellPtr p_cell(new Cell(p_healthy_state, p_cell_model));
+        CellPtr p_cell(new Cell(p_healthy_state, p_cell_model, NULL, false, collection));
         p_cell->SetCellProliferativeType(p_type);
         p_cell->InitialiseCellCycleModel();
         
         //Before adding the CellData to the cell
         CellPropertyCollection cell_protrusion_contacts_collection = p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
         unsigned size = cell_protrusion_contacts_collection.GetSize();
-        boost::shared_ptr<CellProtrusionContacts> p_cell_protrusion_contacts = boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
-        TS_ASSERT_THROWS_NOTHING(p_cell_protrusion_contacts);
-        std::cout << "Size after creating pointer: " << size;
+        std::cout << "Size before creating pointer: " << size;
 
-
+        TS_ASSERT_THROWS_NOTHING(boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty()));
         std::set<unsigned> indices_example;
         indices_example.insert(1);
         indices_example.insert(3);
+        boost::shared_ptr<CellProtrusionContacts> p_cell_protrusion_contacts = boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
         p_cell_protrusion_contacts->SetCellProtrusionContacts(indices_example);
         size = cell_protrusion_contacts_collection.GetSize();
         std::cout << "Size after adding {1, 3} to one cell: " << size;
+        TS_ASSERT_EQUALS(p_cell_protrusion_contacts->GetCellProtrusionContacts(), indices_example);
 
         p_simulation_time->IncrementTimeOneStep();
         p_simulation_time->IncrementTimeOneStep();
 
         TS_ASSERT_EQUALS(p_cell->ReadyToDivide(), true);
 
-        CellPtr p_cell2 = p_cell->Divide();
+        CellPtr p_cell2(new Cell(p_healthy_state, p_cell_model, NULL, false, collection));
+        p_cell2->SetCellProliferativeType(p_type);
+        p_cell2->InitialiseCellCycleModel();
 
         std::set<unsigned> replacement_indices_example;
         replacement_indices_example.insert(2);
@@ -174,11 +229,39 @@ public:
         std::cout << "Size after replacing parent set with {2}: " << size;
 
         TS_ASSERT_EQUALS(p_cell_protrusion_contacts->GetCellProtrusionContacts(), replacement_indices_example);
+        TS_ASSERT_EQUALS(p_parentcell_data->GetCellProtrusionContacts(), replacement_indices_example);
 
         CellPropertyCollection cell2_protrusioncontacts_collection = p_cell2->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
         boost::shared_ptr<CellProtrusionContacts> p_daughtercell_protrusion_contacts = boost::static_pointer_cast<CellProtrusionContacts>(cell2_protrusioncontacts_collection.GetProperty());
 
+        p_daughtercell_protrusion_contacts->SetCellProtrusionContacts(indices_example);
+
         TS_ASSERT_EQUALS(p_daughtercell_protrusion_contacts->GetCellProtrusionContacts(), indices_example);
+        TS_ASSERT_EQUALS(p_parentcell_data->GetCellProtrusionContacts(), replacement_indices_example);
+
+
+        // CellPtr p_cell2 = p_cell->Divide();
+
+        // std::set<unsigned> replacement_indices_example;
+        // replacement_indices_example.insert(2);
+        // size = cell_protrusion_contacts_collection.GetSize();
+        // std::cout << "Size after cell division: " << size;
+        // boost::shared_ptr<CellProtrusionContacts> p_parentcell_data = boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
+        // p_parentcell_data->SetCellProtrusionContacts(replacement_indices_example);
+        // size = cell_protrusion_contacts_collection.GetSize();
+        // std::cout << "Size after replacing parent set with {2}: " << size;
+
+        // TS_ASSERT_EQUALS(p_cell_protrusion_contacts->GetCellProtrusionContacts(), replacement_indices_example);
+        // TS_ASSERT_EQUALS(p_parentcell_data->GetCellProtrusionContacts(), replacement_indices_example);
+
+        // CellPropertyCollection cell2_protrusioncontacts_collection = p_cell2->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
+        // boost::shared_ptr<CellProtrusionContacts> p_daughtercell_protrusion_contacts = boost::static_pointer_cast<CellProtrusionContacts>(cell2_protrusioncontacts_collection.GetProperty());
+
+        // p_daughtercell_protrusion_contacts->SetCellProtrusionContacts(indices_example);
+
+        // TS_ASSERT_EQUALS(p_daughtercell_protrusion_contacts->GetCellProtrusionContacts(), indices_example);
+        // TS_ASSERT_EQUALS(p_parentcell_data->GetCellProtrusionContacts(), replacement_indices_example);
+
     }
 
 };
