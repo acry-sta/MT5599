@@ -98,7 +98,7 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::UpdateCellData(AbstractC
         // Get the set of neighbouring location indices
         std::set<unsigned> neighbour_indices = rCellPopulation.GetNeighbouringLocationIndices(*cell_iter);
         
-        if (cell_iter->HasCellProperty<CellProtrusionContacts>()) 
+        // if (cell_iter->HasCellProperty<CellProtrusionContacts>()) 
         // p_cell->rGetCellPropertyCollection().HasProperty(p_wild_type) // isn't working? confused
         // p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>()
         // if (*cell_iter->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>())
@@ -107,7 +107,7 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::UpdateCellData(AbstractC
         // }
         // else
         // {
-        //    EXCEPTION("Protrusion Contacts cell property not implemented");
+        //   EXCEPTION("Protrusion Contacts cell property not implemented");
         // }
         
         // Compute this cell's average neighbouring Notch and Delta concentration and store in CellData

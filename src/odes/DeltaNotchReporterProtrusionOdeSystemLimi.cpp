@@ -67,9 +67,9 @@ DeltaNotchReporterProtrusionOdeSystemLimi::DeltaNotchReporterProtrusionOdeSystem
     this->mParameters.push_back(2.0); // protrusion tip length initial value
     
     this->mParameters.push_back(0.5*M_PI); // protrusion angle initial value
-    this->mParameters.push_back(0.5*M_PI); // protrusion angular opening initial value
+    this->mParameters.push_back(0.1*M_PI); // protrusion angular opening initial value
     
-    this->mParameters.push_back(0.01); // protrusion angular activation threshold notch initial value
+    this->mParameters.push_back(0.1); // protrusion angular activation threshold initial value
 
 
     if (stateVariables != std::vector<double>())
