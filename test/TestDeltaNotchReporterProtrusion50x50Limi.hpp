@@ -151,7 +151,6 @@ public:
         std::vector<CellPtr> cells;
         MAKE_PTR(WildTypeCellMutationState, p_state);
         MAKE_PTR(DifferentiatedCellProliferativeType, p_diff_type);
-        MAKE_PTR(CellProtrusionContacts, p_protrusion_contacts);
 
         for (unsigned elem_index=0; elem_index<p_mesh->GetNumElements(); elem_index++)
         {
@@ -171,6 +170,7 @@ public:
             /* We additionally add the Cell Property protrusion contacts which contains the indices of all
             cells that this cell is in protrusion-mediated contact with. */
             CellPropertyCollection collection;
+            MAKE_PTR(CellProtrusionContacts, p_protrusion_contacts);
             collection.AddProperty(p_protrusion_contacts);
             
             CellPtr p_cell(new Cell(p_state, p_cc_model, p_srn_model, false, collection));

@@ -98,7 +98,7 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::UpdateCellData(AbstractC
         // Get the set of neighbouring location indices
         std::set<unsigned> neighbour_indices = rCellPopulation.GetNeighbouringLocationIndices(*cell_iter);
         
-        // if (*cell_iter->HasCellProperty<CellProtrusionContacts>()) 
+        if (cell_iter->HasCellProperty<CellProtrusionContacts>()) 
         // p_cell->rGetCellPropertyCollection().HasProperty(p_wild_type) // isn't working? confused
         // p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>()
         // if (*cell_iter->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>())
@@ -191,7 +191,6 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
         // get location index of cell we are looking at
         unsigned index_A = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
         
-        // Find the indices of the elements owned by this node
         for (typename AbstractCellPopulation<DIM>::Iterator possible_contact_cell_iter = rCellPopulation.Begin();
          possible_contact_cell_iter != rCellPopulation.End();
          ++possible_contact_cell_iter) // iterate over all cells to find all possible contacts

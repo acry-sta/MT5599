@@ -91,7 +91,7 @@ public:
     /**
      * This assigns the set of protrusion contacts. 
      */
-    void SetCellProtrusionContacts(const std::set<unsigned> indices);
+    void SetCellProtrusionContacts(const std::set<unsigned> indices); // is const needed here?
 
     /**
      * @return data.
