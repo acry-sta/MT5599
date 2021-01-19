@@ -135,7 +135,7 @@ public:
         /* First we create a 50x50 vertex mesh to run our simulations in. A large mesh is required
         for the patterning impact to appear. This may also be necessary for prepatterning as well. 
         */
-        HoneycombVertexMeshGenerator generator(50, 50);
+        HoneycombVertexMeshGenerator generator(21, 21);
         MutableVertexMesh<2,2>* p_mesh = generator.GetMesh();
         
         // // option to create a cylindrical vertex mesh for periodicity in the x-direction. 
@@ -193,9 +193,9 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Vertex50x50ProtrusionLimi");
+        simulator.SetOutputDirectory("Vertex21x21ProtrusionLimiAlmostAllDir");
         simulator.SetSamplingTimestepMultiple(20);
-        simulator.SetEndTime(20.0);
+        simulator.SetEndTime(10.0);
 
         /* Then, we define the modifier class, which automatically updates the properties of the cells and passes it to the simulation.*/
         MAKE_PTR(DeltaNotchReporterProtrusionTrackingModifier<2>, p_modifier);
