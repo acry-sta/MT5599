@@ -98,17 +98,8 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::UpdateCellData(AbstractC
         // Get the set of neighbouring location indices
         std::set<unsigned> neighbour_indices = rCellPopulation.GetNeighbouringLocationIndices(*cell_iter);
         
-        // if (cell_iter->HasCellProperty<CellProtrusionContacts>()) 
-        // p_cell->rGetCellPropertyCollection().HasProperty(p_wild_type) // isn't working? confused
-        // p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>()
-        // if (*cell_iter->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>())
-        // {
+        // Get the set of protrusion contacts location indices
         std::set<unsigned> protrusion_contact_indices = GetCellProtrusionContactsReference(*cell_iter)->GetCellProtrusionContacts();
-        // }
-        // else
-        // {
-        //   EXCEPTION("Protrusion Contacts cell property not implemented");
-        // }
         
         // Compute this cell's average neighbouring Notch and Delta concentration and store in CellData
         if (!neighbour_indices.empty())
@@ -171,13 +162,10 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
 
     // get reference to mesh
     AbstractMesh<DIM, DIM>& r_mesh = rCellPopulation.rGetMesh();
-
-    // check that CellProtrusionContacts is a property used in this population
-    // boost::shared_ptr< CellPropertyRegistry > AbstractCellPopulation< ELEMENT_DIM, SPACE_DIM >::GetCellPropertyRegistry()	
-    
+  
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = rCellPopulation.Begin();
          cell_iter != rCellPopulation.End();
-         ++cell_iter) // dereferencing iterator gives current cell
+         ++cell_iter) 
     {
         // make empty set for indices
         std::set<unsigned> protrusion_contact_indices;
@@ -188,8 +176,10 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
         double this_protrusion_angle = p_model->GetProtrusionAngle();
         double this_protrusion_angular_opening = p_model->GetProtrusionAngularOpening();
         double angular_activation_threshold = p_model->GetAngularActivationThreshold();
-        // get location index of cell we are looking at
+        // get location index of current cell
         unsigned index_A = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
+        // get location vector of current cell
+        c_vector<double, DIM> location_vector_A = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
         
         for (typename AbstractCellPopulation<DIM>::Iterator possible_contact_cell_iter = rCellPopulation.Begin();
          possible_contact_cell_iter != rCellPopulation.End();
@@ -197,15 +187,24 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
         {
             // get location index of possible contact
             unsigned index_B = rCellPopulation.GetLocationIndexUsingCell(*possible_contact_cell_iter);
-                    
-            c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(r_mesh.GetNode(index_A)->rGetLocation(), r_mesh.GetNode(index_B)->rGetLocation());
+
+            // possible implementation, although the confusion of elements/nodes in the vertex mesh 
+            // means this is confusing
+            // c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(r_mesh.GetNode(index_A)->rGetLocation(), r_mesh.GetNode(index_B)->rGetLocation());
+            // c_vector<double, DIM> unit_vector_between_cells = vector_between_cells/norm_2(vector_between_cells);
+            
+            c_vector<double, DIM> location_vector_B = rCellPopulation.GetLocationOfCellCentre(*possible_contact_cell_iter);
+            
+            c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(location_vector_A, location_vector_B);
             c_vector<double, DIM> unit_vector_between_cells = vector_between_cells/norm_2(vector_between_cells);
-            double distance_between_nodes = norm_2(vector_between_cells);
-            if ( ((2*(this_protrusion_length-this_protrusion_tip_length))<distance_between_nodes) && 
-            (distance_between_nodes < (2*(this_protrusion_length+this_protrusion_tip_length))) )
+
+            // protrusion contact is dependent on the distance between cells
+            double distance_between_cells = norm_2(vector_between_cells);
+            if ( ((2*(this_protrusion_length-this_protrusion_tip_length)) < distance_between_cells) && 
+            (distance_between_cells < (2*(this_protrusion_length+this_protrusion_tip_length))) )
             {
                 if (sin(this_protrusion_angular_opening)*sin(this_protrusion_angular_opening) > angular_activation_threshold)
-                {
+                {   
                     protrusion_contact_indices.insert(index_B);
                 }
                 else
@@ -215,15 +214,14 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
                     dot_product_1 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
                     double dot_product_2;
                     dot_product_2 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
-
                     if ( (0.5*(dot_product_1*dot_product_1 + dot_product_2*dot_product_2)) > angular_activation_threshold)
                     {
                         protrusion_contact_indices.insert(index_B);
                     }
                 }
             }
-            GetCellProtrusionContactsReference(*cell_iter)->SetCellProtrusionContacts(protrusion_contact_indices);
         }
+        GetCellProtrusionContactsReference(*cell_iter)->SetCellProtrusionContacts(protrusion_contact_indices);
     }
 }
 
@@ -233,13 +231,6 @@ boost::shared_ptr<CellProtrusionContacts> DeltaNotchReporterProtrusionTrackingMo
     CellPropertyCollection cell_protrusion_contacts_collection = p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
     return boost::static_pointer_cast<CellProtrusionContacts>(cell_protrusion_contacts_collection.GetProperty());
 }
-
-// template<unsigned DIM>
-// bool DeltaNotchReporterProtrusionTrackingModifier<DIM>::HasCellProtrusionContacts(CellPtr p_cell) const
-// {
-//     return 
-// }
-
 
 template<unsigned DIM>
 void DeltaNotchReporterProtrusionTrackingModifier<DIM>::OutputSimulationModifierParameters(out_stream& rParamsFile)

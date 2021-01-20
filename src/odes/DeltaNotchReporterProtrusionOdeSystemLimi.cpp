@@ -64,12 +64,12 @@ DeltaNotchReporterProtrusionOdeSystemLimi::DeltaNotchReporterProtrusionOdeSystem
     // the following parameters specify the protrusions; these should be possible to overwrite
     // during setup of the test, however leaving their initialisation here is fine as well
     this->mParameters.push_back(3.0); // protrusion length initial value
-    this->mParameters.push_back(1.0); // protrusion tip length initial value
+    this->mParameters.push_back(0.5); // protrusion tip length initial value
     
-    this->mParameters.push_back(0.5*M_PI); // protrusion angle initial value
-    this->mParameters.push_back(0.3*M_PI); // protrusion angular opening initial value
+    this->mParameters.push_back(M_PI/6); // protrusion angle initial value
+    this->mParameters.push_back(0.1*M_PI); // protrusion angular opening initial value
     
-    this->mParameters.push_back(0.5); // protrusion angular activation threshold initial value
+    this->mParameters.push_back(0.4); // protrusion angular activation threshold initial value
 
 
     if (stateVariables != std::vector<double>())
@@ -95,8 +95,8 @@ void DeltaNotchReporterProtrusionOdeSystemLimi::EvaluateYDerivatives(double time
     // we allow for weighting of the different methods of delta and notch arriving at the cell
     // to account for possible differences in efficiency of signalling mechanisms; we denote wn
     // the weight for neighboring cell signals, and wp the weight for protrusion-mediated signalling. 
-    double weighted_notch_in = 1.0 * mean_notch + 0.1 * protrusion_notch;
-    double weighted_delta_in = 1.0 * mean_delta + 0.1 * protrusion_delta; 
+    double weighted_notch_in = 0.5*(0.9 * mean_notch + 0.1 * protrusion_notch);
+    double weighted_delta_in = 0.5*(0.9 * mean_delta + 0.1 * protrusion_delta); 
     
     // total amount of bound delta that leads 
     // weights qn and qp are bounded by wn and wp. qn/wn is the proportion of Delta molecules bound
@@ -105,8 +105,8 @@ void DeltaNotchReporterProtrusionOdeSystemLimi::EvaluateYDerivatives(double time
 
     // The next two lines define the ODE system by Baum et al. (2016)
     rDY[0] = 100.0 - notch - notch*weighted_delta_in/2.0 - notch*delta/0.5;  // d[Notch]/dt
-    rDY[1] = 500.0/(1.0 + reporter*reporter) - delta - delta*weighted_notch_in/2.0 - notch*delta/0.5;   // d[Delta]/dt
-    rDY[2] = 300000.0*notch*weighted_delta_out*notch*weighted_delta_out/(1000000.0 + notch*weighted_delta_out*notch*weighted_delta_out) - reporter;   // d[Reporter]/dt
+    rDY[1] = 100.0/(1.0 + reporter*reporter*reporter) - delta - delta*weighted_notch_in/2.0 - notch*delta/0.5;   // d[Delta]/dt
+    rDY[2] = 300000.0*notch*weighted_delta_out*notch*weighted_delta_out*notch*weighted_delta_out/(100000.0 + notch*weighted_delta_out*notch*weighted_delta_out*notch*weighted_delta_out) - reporter;   // d[Reporter]/dt
 }
 
 template<>
