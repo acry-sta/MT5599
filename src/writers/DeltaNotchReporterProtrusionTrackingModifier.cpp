@@ -162,7 +162,9 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
 
     // get reference to mesh
     AbstractMesh<DIM, DIM>& r_mesh = rCellPopulation.rGetMesh();
-  
+    c_vector<double, DIM> first_cell_location = rCellPopulation.GetLocationOfCellCentre(rCellPopulation.GetCellUsingLocationIndex(0));
+    c_vector<double, DIM> last_cell_location = rCellPopulation.GetLocationOfCellCentre(rCellPopulation.GetCellUsingLocationIndex(rCellPopulation.GetNumAllCells()-1));
+    c_vector<double, DIM> middle_location = 0.5*(last_cell_location - first_cell_location);
     for (typename AbstractCellPopulation<DIM>::Iterator cell_iter = rCellPopulation.Begin();
          cell_iter != rCellPopulation.End();
          ++cell_iter) 
@@ -180,7 +182,8 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
         unsigned index_A = rCellPopulation.GetLocationIndexUsingCell(*cell_iter);
         // get location vector of current cell
         c_vector<double, DIM> location_vector_A = rCellPopulation.GetLocationOfCellCentre(*cell_iter);
-        
+        location_vector_A = location_vector_A - middle_location;
+
         for (typename AbstractCellPopulation<DIM>::Iterator possible_contact_cell_iter = rCellPopulation.Begin();
          possible_contact_cell_iter != rCellPopulation.End();
          ++possible_contact_cell_iter) // iterate over all cells to find all possible contacts
@@ -194,14 +197,18 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
             // c_vector<double, DIM> unit_vector_between_cells = vector_between_cells/norm_2(vector_between_cells);
             
             c_vector<double, DIM> location_vector_B = rCellPopulation.GetLocationOfCellCentre(*possible_contact_cell_iter);
-            
+            location_vector_B = location_vector_B - middle_location;
             c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(location_vector_A, location_vector_B);
             c_vector<double, DIM> unit_vector_between_cells = vector_between_cells/norm_2(vector_between_cells);
 
             // protrusion contact is dependent on the distance between cells
             double distance_between_cells = norm_2(vector_between_cells);
-            if ( ((2*(this_protrusion_length-this_protrusion_tip_length)) < distance_between_cells) && 
-            (distance_between_cells < (2*(this_protrusion_length+this_protrusion_tip_length))) )
+            // // Baum model; does not incorporate variation in protrusion lengths
+            // if ( (1.5 < distance_between_cells) && (distance_between_cells < (2*(this_protrusion_length+this_protrusion_tip_length))) )
+            // // Hypothetical signalling/receiving neighborhood model; does not incorporate variation in protrusion lengths
+            // if ( ((this_protrusion_length-this_protrusion_tip_length) < distance_between_cells) && (distance_between_cells < (2*(this_protrusion_length+this_protrusion_tip_length))) )
+            // Bajpai model
+            if ( (2*(this_protrusion_length-this_protrusion_tip_length) < distance_between_cells) && (distance_between_cells < (2*(this_protrusion_length+this_protrusion_tip_length))) )
             {
                 if (sin(this_protrusion_angular_opening)*sin(this_protrusion_angular_opening) > angular_activation_threshold)
                 {   
@@ -210,10 +217,20 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
                 else
                 {
                     // calculate the dot product and divide by 2
+                    
+                    // polarized projections
+                    c_vector<double, DIM> unit_location_vector_A = location_vector_A/norm_2(location_vector_A);
+                    c_vector<double, DIM> unit_location_vector_B = location_vector_B/norm_2(location_vector_B);
                     double dot_product_1;
-                    dot_product_1 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
+                    dot_product_1 = unit_vector_between_cells[0]*unit_location_vector_A[0] + unit_vector_between_cells[1]*unit_location_vector_A[1];
                     double dot_product_2;
-                    dot_product_2 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
+                    dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[0] + unit_vector_between_cells[1]*unit_location_vector_B[1];
+
+                    // // if all cells have same angle of protrusion
+                    // double dot_product_1;
+                    // dot_product_1 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
+                    // double dot_product_2;
+                    // dot_product_2 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
                     if ( (0.5*(dot_product_1*dot_product_1 + dot_product_2*dot_product_2)) > angular_activation_threshold)
                     {
                         protrusion_contact_indices.insert(index_B);

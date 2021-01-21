@@ -193,7 +193,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("inN0.9P0.1outN0.01P0.025increased10.0");
+        simulator.SetOutputDirectory("L2Tl0.5Thresh0.4Centred");
         simulator.SetSamplingTimestepMultiple(20);
         simulator.SetEndTime(10.0);
 
