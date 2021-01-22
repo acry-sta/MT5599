@@ -218,13 +218,22 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
                 {
                     // calculate the dot product and divide by 2
                     
-                    // polarized projections
+                    // // polarized projections; projections point away from the centre
+                    // c_vector<double, DIM> unit_location_vector_A = location_vector_A/norm_2(location_vector_A);
+                    // c_vector<double, DIM> unit_location_vector_B = location_vector_B/norm_2(location_vector_B);
+                    // double dot_product_1;
+                    // dot_product_1 = unit_vector_between_cells[0]*unit_location_vector_A[0] + unit_vector_between_cells[1]*unit_location_vector_A[1];
+                    // double dot_product_2;
+                    // dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[0] + unit_vector_between_cells[1]*unit_location_vector_B[1];
+
+                    // polarized projections; projections point in a circle
                     c_vector<double, DIM> unit_location_vector_A = location_vector_A/norm_2(location_vector_A);
                     c_vector<double, DIM> unit_location_vector_B = location_vector_B/norm_2(location_vector_B);
                     double dot_product_1;
-                    dot_product_1 = unit_vector_between_cells[0]*unit_location_vector_A[0] + unit_vector_between_cells[1]*unit_location_vector_A[1];
+                    dot_product_1 = unit_vector_between_cells[0]*unit_location_vector_A[1] - unit_vector_between_cells[1]*unit_location_vector_A[0];
                     double dot_product_2;
-                    dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[0] + unit_vector_between_cells[1]*unit_location_vector_B[1];
+                    dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[1] - unit_vector_between_cells[1]*unit_location_vector_B[0];
+
 
                     // // if all cells have same angle of protrusion
                     // double dot_product_1;

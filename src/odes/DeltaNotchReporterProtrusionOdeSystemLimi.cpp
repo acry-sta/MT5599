@@ -63,13 +63,13 @@ DeltaNotchReporterProtrusionOdeSystemLimi::DeltaNotchReporterProtrusionOdeSystem
 
     // the following parameters specify the protrusions; these should be possible to overwrite
     // during setup of the test, however leaving their initialisation here is fine as well
-    this->mParameters.push_back(2.0); // protrusion length initial value
-    this->mParameters.push_back(0.5); // protrusion tip length initial value
+    this->mParameters.push_back(1.0); // protrusion length initial value
+    this->mParameters.push_back(0.25); // protrusion tip length initial value
     
     this->mParameters.push_back(0.5*M_PI); // protrusion angle initial value
     this->mParameters.push_back(0.1*M_PI); // protrusion angular opening initial value
     
-    this->mParameters.push_back(0.4); // protrusion angular activation threshold initial value
+    this->mParameters.push_back(0.6); // protrusion angular activation threshold initial value
 
 
     if (stateVariables != std::vector<double>())
