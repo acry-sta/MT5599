@@ -17,5 +17,6 @@ TestDeltaNotchReporterProtrusionOdeSystemLimi.hpp
 TestDeltaNotchReporterProtrusion50x50Limi.hpp
 TestCellProtrusionContacts.hpp
 TestDeltaNotch7x7PeriodicAdjacencyWriter.hpp
-
+TestReporterDependentCellCycleModel.hpp
+TestFinalModel.hpp
 
