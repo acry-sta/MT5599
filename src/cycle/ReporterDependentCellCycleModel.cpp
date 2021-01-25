@@ -86,11 +86,19 @@ bool ReporterDependentCellCycleModel::ReadyToDivide()
     return mReadyToDivide;
 }
 
+void ReporterDependentCellCycleModel::ResetForDivision()
+{
+    AbstractCellCycleModel::ResetForDivision();
+    boost::shared_ptr<AbstractCellProperty> p_diff_type =
+        mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<DifferentiatedCellProliferativeType>();
+    mpCell->SetCellProliferativeType(p_diff_type);
+    mpCell->SetCellProliferativeType(p_diff_type);
+}
+
 void ReporterDependentCellCycleModel::InitialiseDaughterCell()
 {
     boost::shared_ptr<AbstractCellProperty> p_diff_type =
         mpCell->rGetCellPropertyCollection().GetCellPropertyRegistry()->Get<DifferentiatedCellProliferativeType>();
-    mpCell->SetCellProliferativeType(p_diff_type);
 }
 
 AbstractCellCycleModel* ReporterDependentCellCycleModel::CreateCellCycleModel()

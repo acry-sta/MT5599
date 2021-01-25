@@ -125,13 +125,19 @@ public:
      *
      * @return whether the cell is ready to divide.
      */
-    virtual bool ReadyToDivide();
+    bool ReadyToDivide();
 
     /**
      * Overriden InitialiseDaughterCell method, this allows us to mark any cells that have divided
      * as differentiated cells that no longer divide.
      */
-    virtual void InitialiseDaughterCell();
+    void InitialiseDaughterCell();
+
+    /**
+     * Overriden ResetForDivision method, this allows us to mark any cells that have divided
+     * as differentiated cells that no longer divide.
+     */
+    void ResetForDivision();
 
     /**
      * Overridden builder method to create new instances of

@@ -98,7 +98,6 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CellProliferativeTypesCountWriter.hpp"
 #include "SmartPointers.hpp"
 #include "PetscSetupAndFinalize.hpp"
-#include "UniformG1GenerationalCellCycleModel.hpp"
 #include "ReporterDependentCellCycleModel.hpp"
 #include "TransitCellProliferativeType.hpp"
 
@@ -112,7 +111,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * The next header defines the simulation class modifier corresponding to the Delta-Notch SRN model.
  * This modifier leads to the {{{CellData}}} cell property being updated at each timestep to deal with Delta-Notch signalling.
  */
-#include "DeltaNotchReporterProtrusionTrackingModifier.hpp"
+#include "DeltaNotchReporterProtrusionDifferentiationTrackingModifier.hpp"
 
 /* Having included all the necessary header files, we proceed by defining the test class.
  */
@@ -140,7 +139,7 @@ public:
         */
         HoneycombVertexMeshGenerator generator(12, 12);
         MutableVertexMesh<2,2>* p_mesh = generator.GetMesh();
-        
+
         // // option to create a cylindrical vertex mesh for periodicity in the x-direction. 
         // CylindricalHoneycombVertexMeshGenerator generator(50, 50);
         // Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
@@ -185,28 +184,23 @@ public:
             cells.push_back(p_cell);
         }
 
-        std::cout << "Exited cell creation." << std::endl;
-
-
         /* Using the vertex mesh and cells, we create a cell-based population object, and specify which results to
          * output to file. */
         VertexBasedCellPopulation<2> cell_population(*p_mesh, cells);
         cell_population.AddCellPopulationCountWriter<CellMutationStatesCountWriter>();
         cell_population.AddCellPopulationCountWriter<CellProliferativeTypesCountWriter>();
-        cell_population.AddCellPopulationCountWriter<CellProliferativePhasesCountWriter>();
-        cell_population.AddCellWriter<CellProliferativePhasesWriter>();
         cell_population.AddCellWriter<CellAgesWriter>();
         cell_population.AddCellWriter<CellVolumesWriter>();
 
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Attempt1");
+        simulator.SetOutputDirectory("Attempt7AllDirL2Tl0.5inx2outN0.02P0.05end20.0");
         simulator.SetSamplingTimestepMultiple(20);
-        simulator.SetEndTime(10.0);
+        simulator.SetEndTime(20.0);
 
         /* Then, we define the modifier class, which automatically updates the properties of the cells and passes it to the simulation.*/
-        MAKE_PTR(DeltaNotchReporterProtrusionTrackingModifier<2>, p_modifier);
+        MAKE_PTR(DeltaNotchReporterProtrusionDifferentiationTrackingModifier<2>, p_modifier);
         simulator.AddSimulationModifier(p_modifier);
 
         MAKE_PTR(NagaiHondaForce<2>, p_force);
