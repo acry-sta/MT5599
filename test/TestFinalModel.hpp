@@ -195,9 +195,9 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Attempt7AllDirL2Tl0.5inx2outN0.02P0.05end20.0");
+        simulator.SetOutputDirectory("Attempt7AllDirL1Tl0.25end40.0");
         simulator.SetSamplingTimestepMultiple(20);
-        simulator.SetEndTime(20.0);
+        simulator.SetEndTime(40.0);
 
         /* Then, we define the modifier class, which automatically updates the properties of the cells and passes it to the simulation.*/
         MAKE_PTR(DeltaNotchReporterProtrusionDifferentiationTrackingModifier<2>, p_modifier);

@@ -178,8 +178,8 @@ public:
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
         simulator.SetOutputDirectory("VertexPeriodic7x7DeltaNotch");
-        simulator.SetSamplingTimestepMultiple(50);
-        simulator.SetEndTime(20.0);
+        simulator.SetSamplingTimestepMultiple(10);
+        simulator.SetEndTime(10.0);
 
         /* Then, we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
         MAKE_PTR(DeltaNotchTrackingModifier<2>, p_modifier);

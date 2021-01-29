@@ -133,7 +133,7 @@ public:
         EXIT_IF_PARALLEL;
 
         /* First we create a 7x7 cylindrical vertex mesh for periodicity in the x-direction. */
-        CylindricalHoneycombVertexMeshGenerator generator(7, 7);
+        CylindricalHoneycombVertexMeshGenerator generator(8,8);
         Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
 
         /* We then create some cells, each with a cell-cycle model, {{{UniformG1GenerationalCellCycleModel}}} and a subcellular reaction network model
@@ -177,8 +177,8 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("TestingAdjustVertexPeriodic7x7DeltaNotch");
-        simulator.SetSamplingTimestepMultiple(50);
+        simulator.SetOutputDirectory("Collier8x8Periodic");
+        simulator.SetSamplingTimestepMultiple(10);
         simulator.SetEndTime(20.0);
 
         /* Then, we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
@@ -211,69 +211,69 @@ public:
      * In the next test we run a similar simulation as before, but this time with node-based
      * 'overlapping spheres' model.
      */
-    void TestNodeBasedMonolayerWithDeltaNotch()
-    {
-        /* We include the next line because HoneycombMeshGenerator, used in this test, is not
-         *  yet implemented in parallel. */
-        EXIT_IF_PARALLEL;
+    // void TestNodeBasedMonolayerWithDeltaNotch()
+    // {
+    //     /* We include the next line because HoneycombMeshGenerator, used in this test, is not
+    //      *  yet implemented in parallel. */
+    //     EXIT_IF_PARALLEL;
 
-        /*
-         * Most of the code in this test is the same as in the previous test,
-         * except we now create a 'nodes-only mesh' and {{{NodeBasedCellPopulation}}}.
-         */
-        HoneycombMeshGenerator generator(7, 7);
-        MutableMesh<2,2>* p_generating_mesh = generator.GetMesh();
-        NodesOnlyMesh<2> mesh;
-        /* The mechanics cut-off length (second argument) is used in this simulation to determine nearest
-         * neighbours for the purpose of the Delta/Notch intercellular signalling model.
-         */
-        mesh.ConstructNodesWithoutMesh(*p_generating_mesh, 1.5);
+    //     /*
+    //      * Most of the code in this test is the same as in the previous test,
+    //      * except we now create a 'nodes-only mesh' and {{{NodeBasedCellPopulation}}}.
+    //      */
+    //     HoneycombMeshGenerator generator(7, 7);
+    //     MutableMesh<2,2>* p_generating_mesh = generator.GetMesh();
+    //     NodesOnlyMesh<2> mesh;
+    //     /* The mechanics cut-off length (second argument) is used in this simulation to determine nearest
+    //      * neighbours for the purpose of the Delta/Notch intercellular signalling model.
+    //      */
+    //     mesh.ConstructNodesWithoutMesh(*p_generating_mesh, 1.5);
 
-        std::vector<CellPtr> cells;
-        MAKE_PTR(WildTypeCellMutationState, p_state);
-        MAKE_PTR(DifferentiatedCellProliferativeType, p_diff_type);
-        for (unsigned i=0; i<mesh.GetNumNodes(); i++)
-        {
-            UniformG1GenerationalCellCycleModel* p_cc_model = new UniformG1GenerationalCellCycleModel();
-            p_cc_model->SetDimension(2);
+    //     std::vector<CellPtr> cells;
+    //     MAKE_PTR(WildTypeCellMutationState, p_state);
+    //     MAKE_PTR(DifferentiatedCellProliferativeType, p_diff_type);
+    //     for (unsigned i=0; i<mesh.GetNumNodes(); i++)
+    //     {
+    //         UniformG1GenerationalCellCycleModel* p_cc_model = new UniformG1GenerationalCellCycleModel();
+    //         p_cc_model->SetDimension(2);
 
-            /* We choose to initialise the concentrations to random levels in each cell. */
-            std::vector<double> initial_conditions;
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            DeltaNotchSrnModelAdjusted* p_srn_model = new DeltaNotchSrnModelAdjusted();
-            p_srn_model->SetInitialConditions(initial_conditions);
+    //         /* We choose to initialise the concentrations to random levels in each cell. */
+    //         std::vector<double> initial_conditions;
+    //         initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+    //         initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+    //         DeltaNotchSrnModelAdjusted* p_srn_model = new DeltaNotchSrnModelAdjusted();
+    //         p_srn_model->SetInitialConditions(initial_conditions);
 
-            CellPtr p_cell(new Cell(p_state, p_cc_model, p_srn_model));
-            p_cell->SetCellProliferativeType(p_diff_type);
-            double birth_time = -RandomNumberGenerator::Instance()->ranf()*12.0;
-            p_cell->SetBirthTime(birth_time);
-            cells.push_back(p_cell);
-        }
+    //         CellPtr p_cell(new Cell(p_state, p_cc_model, p_srn_model));
+    //         p_cell->SetCellProliferativeType(p_diff_type);
+    //         double birth_time = -RandomNumberGenerator::Instance()->ranf()*12.0;
+    //         p_cell->SetBirthTime(birth_time);
+    //         cells.push_back(p_cell);
+    //     }
 
-        NodeBasedCellPopulation<2> cell_population(mesh, cells);
-        cell_population.AddCellPopulationCountWriter<CellProliferativeTypesCountWriter>();
-        cell_population.AddCellPopulationCountWriter<CellMutationStatesCountWriter>();
-        cell_population.AddCellWriter<CellIdWriter>();
-        cell_population.AddCellPopulationCountWriter<CellProliferativePhasesCountWriter>();
-        cell_population.AddCellWriter<CellAgesWriter>();
+    //     NodeBasedCellPopulation<2> cell_population(mesh, cells);
+    //     cell_population.AddCellPopulationCountWriter<CellProliferativeTypesCountWriter>();
+    //     cell_population.AddCellPopulationCountWriter<CellMutationStatesCountWriter>();
+    //     cell_population.AddCellWriter<CellIdWriter>();
+    //     cell_population.AddCellPopulationCountWriter<CellProliferativePhasesCountWriter>();
+    //     cell_population.AddCellWriter<CellAgesWriter>();
 
-        OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Node7x7DeltaNotch");
-        simulator.SetSamplingTimestepMultiple(20);
-        simulator.SetEndTime(20.0);
+    //     OffLatticeSimulation<2> simulator(cell_population);
+    //     simulator.SetOutputDirectory("Node7x7DeltaNotch");
+    //     simulator.SetSamplingTimestepMultiple(20);
+    //     simulator.SetEndTime(20.0);
 
-        /* Again we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
-        MAKE_PTR(DeltaNotchTrackingModifier<2>, p_modifier);
-        simulator.AddSimulationModifier(p_modifier);
+    //     /* Again we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
+    //     MAKE_PTR(DeltaNotchTrackingModifier<2>, p_modifier);
+    //     simulator.AddSimulationModifier(p_modifier);
 
-        /* As we are using a node-based cell population, we use an appropriate force law. */
-        MAKE_PTR(GeneralisedLinearSpringForce<2>, p_force);
-        p_force->SetCutOffLength(1.5);
-        simulator.AddForce(p_force);
+    //     /* As we are using a node-based cell population, we use an appropriate force law. */
+    //     MAKE_PTR(GeneralisedLinearSpringForce<2>, p_force);
+    //     p_force->SetCutOffLength(1.5);
+    //     simulator.AddForce(p_force);
 
-        simulator.Solve();
-    }
+    //     simulator.Solve();
+    // }
     /*
      * EMPTYLINE
      *
