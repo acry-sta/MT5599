@@ -81,6 +81,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "HoneycombMeshGenerator.hpp"
 #include "HoneycombVertexMeshGenerator.hpp"
 #include "CylindricalHoneycombVertexMeshGenerator.hpp"
+#include "ToroidalHoneycombVertexMeshGenerator.hpp"
 #include "NodeBasedCellPopulation.hpp"
 #include "OffLatticeSimulation.hpp"
 #include "VertexBasedCellPopulation.hpp"
@@ -133,8 +134,14 @@ public:
         EXIT_IF_PARALLEL;
 
         /* First we create a 7x7 cylindrical vertex mesh for periodicity in the x-direction. */
-        CylindricalHoneycombVertexMeshGenerator generator(8,8);
-        Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
+        // CylindricalHoneycombVertexMeshGenerator generator(4, 4);
+        // Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
+
+        /* Option to create toroidal vertex mesh for periodicity in all directions. */
+        ToroidalHoneycombVertexMeshGenerator generator(7, 7);
+        Toroidal2dVertexMesh* p_mesh = generator.GetToroidalMesh();
+        p_mesh->SetCellRearrangementThreshold(0.1);
+
 
         /* We then create some cells, each with a cell-cycle model, {{{UniformG1GenerationalCellCycleModel}}} and a subcellular reaction network model
          * {{{DeltaNotchSrnModel}}}, which
@@ -177,8 +184,8 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Collier8x8Periodic");
-        simulator.SetSamplingTimestepMultiple(10);
+        simulator.SetOutputDirectory("Collier7x7AllPeriodic");
+        simulator.SetSamplingTimestepMultiple(5);
         simulator.SetEndTime(20.0);
 
         /* Then, we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/

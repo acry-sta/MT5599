@@ -42,8 +42,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#ifndef TESTDELTANOTCHREPORTER12x12PERIODICLIPREPATTERN_HPP_
-#define TESTDELTANOTCHREPORTER12x12PERIODICLIPREPATTERN_HPP_
+#ifndef TESTDELTANOTCHREPORTER12x12PERIODICLIMIPREPATTERN_HPP_
+#define TESTDELTANOTCHREPORTER12x12PERIODICLIMIPREPATTERN_HPP_
 
 /*
  * = An example showing how to run Delta/Notch simulations =
@@ -104,7 +104,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * for solving each cell's Delta/Notch signalling ODE system at each time step, using information about neighbouring
  * cells through the {{{CellData}}} class.
  */
-#include "DeltaNotchReporterSrnModelLi.hpp"
+#include "DeltaNotchReporterSrnModelLimi.hpp"
 /*
  * The next header defines the simulation class modifier corresponding to the Delta-Notch SRN model.
  * This modifier leads to the {{{CellData}}} cell property being updated at each timestep to deal with Delta-Notch signalling.
@@ -113,7 +113,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Having included all the necessary header files, we proceed by defining the test class.
  */
-class TestDeltaNotchReporter12x12PeriodicLiPrepattern : public AbstractCellBasedTestSuite
+class TestDeltaNotchReporter12x12PeriodicLimiPrepattern : public AbstractCellBasedTestSuite
 {
 public:
 
@@ -154,21 +154,35 @@ public:
             form of the grid, strips can be made by taking any value modulo 3, 4 or 6 (divisors of 12).
             Thickness of the prepattern stripes is determined by the value of the remainder.*/
             std::vector<double> initial_conditions;
-            // thin striped prepattern
-          //  if ((elem_index%4)<2){
-          //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-          //   }
-          //   else{
-          //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
-          //   }
-        // thick striped prepattern
-           if ((elem_index%6)<4){
-              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            }
-            else{
-              initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
-            }
-            //  // offset patches prepattern
+            // thin striped prepattern           
+            // if ((elem_index%3)<2){
+            //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            //   }
+            //   else{
+            //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            //   }
+            // thin stripe thick blank prepattern
+              //  if ((elem_index%6)<1){
+              //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+              //   }
+              //   else{
+              //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+              //   }
+            // // thicker striped prepattern
+            //    if ((elem_index%6)<3){
+            //       initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            //     }
+            //     else{
+            //       initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            //     }
+            // // thick striped prepattern
+            //   if ((elem_index%6)<4){
+            //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            //   }
+            //   else{
+            //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            //   }
+             // offset patches prepattern
             // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             // }
@@ -184,22 +198,22 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
-            // // regular patches prepattern
-            // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
-            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            // }
-            // else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<6) &&((int)(elem_index/12)>3) ){
-            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            // }
-            // else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<10) &&((int)(elem_index/12)>7) ){
-            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            // }
-            // else{
-            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
-            // }
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // regular patches prepattern
+            if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
+              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            }
+            else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<6) &&((int)(elem_index/12)>3) ){
+              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            }
+            else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<10) &&((int)(elem_index/12)>7) ){
+              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            }
+            else{
+              initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            }
+            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf()); 
             initial_conditions.push_back(0.1*RandomNumberGenerator::Instance()->ranf());
-            DeltaNotchReporterSrnModelLi* p_srn_model = new DeltaNotchReporterSrnModelLi();
+            DeltaNotchReporterSrnModelLimi* p_srn_model = new DeltaNotchReporterSrnModelLimi();
             p_srn_model->SetInitialConditions(initial_conditions);
 
             CellPtr p_cell(new Cell(p_state, p_cc_model, p_srn_model));
@@ -222,7 +236,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Vertex12x12PeriodicLiPrepatternThickStripes");
+        simulator.SetOutputDirectory("12x12PeriodicRegularPatchesNotch");
         simulator.SetSamplingTimestepMultiple(40);
         simulator.SetEndTime(20.0);
 
@@ -256,88 +270,6 @@ public:
      * In the next test we run a similar simulation as before, but this time with node-based
      * 'overlapping spheres' model.
      */
-    // void TestNodeBasedMonolayerWithDeltaNotch()
-    // {
-    //     /* We include the next line because HoneycombMeshGenerator, used in this test, is not
-    //      *  yet implemented in parallel. */
-    //     EXIT_IF_PARALLEL;
-
-    //     /*
-    //      * Most of the code in this test is the same as in the previous test,
-    //      * except we now create a 'nodes-only mesh' and {{{NodeBasedCellPopulation}}}.
-    //      */
-    //     HoneycombMeshGenerator generator(12, 12);
-    //     MutableMesh<2,2>* p_generating_mesh = generator.GetMesh();
-    //     NodesOnlyMesh<2> mesh;
-    //     /* The mechanics cut-off length (second argument) is used in this simulation to determine nearest
-    //      * neighbours for the purpose of the Delta/Notch intercellular signalling model.
-    //      */
-    //     mesh.ConstructNodesWithoutMesh(*p_generating_mesh, 1.5);
-
-    //     std::vector<CellPtr> cells;
-    //     MAKE_PTR(WildTypeCellMutationState, p_state);
-    //     MAKE_PTR(DifferentiatedCellProliferativeType, p_diff_type);
-    //     for (unsigned i=0; i<mesh.GetNumNodes(); i++)
-    //     {
-    //         UniformG1GenerationalCellCycleModel* p_cc_model = new UniformG1GenerationalCellCycleModel();
-    //         p_cc_model->SetDimension(2);
-
-    //         /* We choose to initialise the concentrations to random levels in each cell. */
-    //         std::vector<double> initial_conditions;
-    //         if ((i%4)<3){
-    //           initial_conditions.push_back(0.25*RandomNumberGenerator::Instance()->ranf());
-    //           initial_conditions.push_back(20.0*RandomNumberGenerator::Instance()->ranf());
-    //         }
-    //         else{
-    //           initial_conditions.push_back(20.0*RandomNumberGenerator::Instance()->ranf());
-    //           initial_conditions.push_back(0.25*RandomNumberGenerator::Instance()->ranf());
-    //         }
-    //         initial_conditions.push_back(0.1*RandomNumberGenerator::Instance()->ranf());
-            
-    //         DeltaNotchReporterSrnModelLi* p_srn_model = new DeltaNotchReporterSrnModelLi();
-    //         p_srn_model->SetInitialConditions(initial_conditions);
-
-    //         CellPtr p_cell(new Cell(p_state, p_cc_model, p_srn_model));
-    //         p_cell->SetCellProliferativeType(p_diff_type);
-    //         double birth_time = -RandomNumberGenerator::Instance()->ranf()*12.0;
-    //         p_cell->SetBirthTime(birth_time);
-    //         cells.push_back(p_cell);
-    //     }
-
-    //     NodeBasedCellPopulation<2> cell_population(mesh, cells);
-    //     cell_population.AddCellPopulationCountWriter<CellProliferativeTypesCountWriter>();
-    //     cell_population.AddCellPopulationCountWriter<CellMutationStatesCountWriter>();
-    //     cell_population.AddCellWriter<CellIdWriter>();
-    //     cell_population.AddCellPopulationCountWriter<CellProliferativePhasesCountWriter>();
-    //     cell_population.AddCellWriter<CellAgesWriter>();
-
-    //     OffLatticeSimulation<2> simulator(cell_population);
-    //     simulator.SetOutputDirectory("Node12x12LiPrepatternStripes");
-    //     simulator.SetSamplingTimestepMultiple(12);
-    //     simulator.SetEndTime(20.0);
-
-    //     /* Again we define the modifier class, which automatically updates the values of Delta and Notch within the cells in {{{CellData}}} and passes it to the simulation.*/
-    //     MAKE_PTR(DeltaNotchReporterTrackingModifier<2>, p_modifier);
-    //     simulator.AddSimulationModifier(p_modifier);
-
-    //     /* As we are using a node-based cell population, we use an appropriate force law. */
-    //     MAKE_PTR(GeneralisedLinearSpringForce<2>, p_force);
-    //     p_force->SetCutOffLength(1.5);
-    //     simulator.AddForce(p_force);
-
-    //     simulator.Solve();
-    // }
-    /*
-     * EMPTYLINE
-     *
-     * To visualize the results, use Paraview. See the UserTutorials/VisualizingWithParaview tutorial for more information.
-     *
-     * Load the file {{{/tmp/$USER/testoutput/TestNodeBasedMonolayerWithDeltaNotch/results_from_time_0/results.pvd}}},
-     * and add a spherical glyph.
-     *
-     * Note that, for larger simulations, you may need to unclick "Mask Points" (or similar) so as not to limit the number of glyphs
-     * displayed by Paraview.
-     */
 };
 
-#endif /*TESTDELTANOTCHREPORTER12x12PERIODICLIPREPATTERN_HPP_*/
+#endif /*TESTDELTANOTCHREPORTER12x12PERIODICLIMIPREPATTERN_HPP_*/

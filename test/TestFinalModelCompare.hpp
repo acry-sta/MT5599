@@ -42,8 +42,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#ifndef TESTFINALMODEL_HPP_
-#define TESTFINALMODEL_HPP_
+#ifndef TESTFINALMODELCOMPARE_HPP_
+#define TESTFINALMODELCOMPARE_HPP_
 
 /*
  * = An example showing how to run Delta/Notch simulations =
@@ -98,7 +98,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CellProliferativeTypesCountWriter.hpp"
 #include "SmartPointers.hpp"
 #include "PetscSetupAndFinalize.hpp"
-#include "ReporterDependentCellCycleModel.hpp"
+#include "FixedProbabilityCellCycleModel.hpp"
 #include "TransitCellProliferativeType.hpp"
 
 /*
@@ -115,7 +115,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* Having included all the necessary header files, we proceed by defining the test class.
  */
-class TestFinalModel : public AbstractCellBasedTestSuite
+class TestFinalModelCompare : public AbstractCellBasedTestSuite
 {
 public:
 
@@ -157,7 +157,7 @@ public:
 
         for (unsigned elem_index=0; elem_index<p_mesh->GetNumElements(); elem_index++)
         {
-            ReporterDependentCellCycleModel* p_transit_model = new ReporterDependentCellCycleModel();
+            FixedProbabilityCellCycleModel* p_transit_model = new FixedProbabilityCellCycleModel();
             
             /* We choose to initialise the concentrations of Notch and Delta to random levels 
             in each cell. Similarly the concentration of Reporter in each cell is randomly initialized, but
@@ -195,7 +195,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Experiment");
+        simulator.SetOutputDirectory("Attempt6AllDirL1Tl0.25");
         simulator.SetSamplingTimestepMultiple(20);
         simulator.SetEndTime(10.0);
 
@@ -216,4 +216,4 @@ public:
 
 };
 
-#endif /*TESTFINALMODEL_HPP_*/
+#endif /*TESTFINALMODELCOMPARE_HPP_*/

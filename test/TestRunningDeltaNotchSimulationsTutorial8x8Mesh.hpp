@@ -132,7 +132,7 @@ public:
         EXIT_IF_PARALLEL;
 
         /* First we create a regular vertex mesh. */
-        HoneycombVertexMeshGenerator generator(8,8);
+        HoneycombVertexMeshGenerator generator(4,4);
         MutableVertexMesh<2,2>* p_mesh = generator.GetMesh();
 
         /* We then create some cells, each with a cell-cycle model, {{{UniformG1GenerationalCellCycleModel}}} and a subcellular reaction network model
@@ -176,7 +176,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Collier8x8");
+        simulator.SetOutputDirectory("Collier4x4");
         simulator.SetSamplingTimestepMultiple(10);
         simulator.SetEndTime(20.0);
 
