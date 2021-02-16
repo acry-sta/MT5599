@@ -154,35 +154,35 @@ public:
             form of the grid, strips can be made by taking any value modulo 3, 4 or 6 (divisors of 12).
             Thickness of the prepattern stripes is determined by the value of the remainder.*/
             std::vector<double> initial_conditions;
-            // thin striped prepattern           
-            // if ((elem_index%3)<2){
+            // mod 2 striped prepattern           
+            // if ((elem_index%2)<1){
             //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             //   }
             //   else{
             //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //   }
-            // thin stripe thick blank prepattern
-              //  if ((elem_index%6)<1){
+            // mod 3 striped prepattern
+              //  if ((elem_index%3)<2){
               //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
               //   }
               //   else{
               //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
               //   }
-            // // thicker striped prepattern
-            //    if ((elem_index%6)<3){
+            // // mod 4 striped prepattern
+            //    if ((elem_index%4)<3){
             //       initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             //     }
             //     else{
             //       initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //     }
-            // // thick striped prepattern
+            // // mod 6 striped prepattern
             //   if ((elem_index%6)<4){
             //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             //   }
             //   else{
             //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //   }
-             // offset patches prepattern
+            // // offset 2x2 patches prepattern, lines thickness 1, 2
             // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             // }
@@ -198,14 +198,89 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
-            // regular patches prepattern
-            if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
+            // // offset 2x2 patches prepattern, lines thickness 1
+            // if ( (((elem_index + 1)%3)<2)&&((int)(elem_index/12)<2) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( (((elem_index + 1)%3)<2)&&((int)(elem_index/12)<8) &&((int)(elem_index/12)>5) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%3)>0)&&((int)(elem_index/12)<5) &&((int)(elem_index/12)>2) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%3)>0)&&((int)(elem_index/12)<11) &&((int)(elem_index/12)>8) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            // // regular 2x2 patches prepattern, thickness 2 line between
+            // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<6) &&((int)(elem_index/12)>3) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<10) &&((int)(elem_index/12)>7) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            // // regular 2x2 patches prepattern, thickness 1 line between
+            // if ( (((elem_index)%3)<2)&&((int)(elem_index/12)<2) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%3)<2)&&((int)(elem_index/12)<8) &&((int)(elem_index/12)>5) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%3)<2)&&((int)(elem_index/12)<5) &&((int)(elem_index/12)>2) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%3)<2)&&((int)(elem_index/12)<11) &&((int)(elem_index/12)>8) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            // // regular 3x3 patches prepattern, thickness 1 line between
+            // if ( ((elem_index%4)<3)&&((int)(elem_index/12)<3) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%4)<3)&&((int)(elem_index/12)<7) &&((int)(elem_index/12)>3) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%4)<3)&&((int)(elem_index/12)<11) &&((int)(elem_index/12)>7) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            // // regular 4x4 patches prepattern, thickness 2 line between
+            // if ( ((elem_index%6)<4)&&((int)(elem_index/12)<4) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%6)<4)&&((int)(elem_index/12)<10) &&((int)(elem_index/12)>5) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            // // offset 4x4 patches prepattern, thickness 2 line between
+            // if ( ((elem_index%6)<4)&&((int)(elem_index/12)<4) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%6)>1)&&((int)(elem_index/12)<10) &&((int)(elem_index/12)>5) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            // regular 5x5 patches prepattern, thickness 1 line between
+            if ( ((elem_index%6)<5)&&((int)(elem_index/12)<5) ){
               initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             }
-            else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<6) &&((int)(elem_index/12)>3) ){
-              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            }
-            else if ( ((elem_index%4)<2)&&((int)(elem_index/12)<10) &&((int)(elem_index/12)>7) ){
+            else if ( ((elem_index%6)<5)&&((int)(elem_index/12)<11) &&((int)(elem_index/12)>5) ){
               initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             }
             else{
@@ -236,7 +311,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("12x12PeriodicRegularPatchesNotch");
+        simulator.SetOutputDirectory("12x12Periodic5x5RegularPatchesLt1Notch");
         simulator.SetSamplingTimestepMultiple(40);
         simulator.SetEndTime(20.0);
 
