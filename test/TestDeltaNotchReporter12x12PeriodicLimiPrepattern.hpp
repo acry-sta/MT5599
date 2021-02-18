@@ -162,19 +162,28 @@ public:
             //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //   }
             // mod 3 striped prepattern
-              //  if ((elem_index%3)<2){
-              //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-              //   }
-              //   else{
-              //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
-              //   }
-            // // mod 4 striped prepattern
-            //    if ((elem_index%4)<3){
+            //  if ((elem_index%3)<2){
+            //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            //   }
+            //   else{
+            //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            //   }
+            // mod 4 striped prepattern
+               if ((elem_index%4)<2){
+                  initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+                }
+                else{
+                  initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+                }
+            // // mod 4 striped prepattern in other direction
+            //    if (((int)(elem_index/12)%4)<2){
             //       initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             //     }
             //     else{
             //       initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //     }
+
+            
             // // mod 6 striped prepattern
             //   if ((elem_index%6)<4){
             //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -214,7 +223,7 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
-            // // regular 2x2 patches prepattern, thickness 2 line between
+            // regular 2x2 patches prepattern, thickness 2 line between
             // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             // }
@@ -276,17 +285,18 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
-            // regular 5x5 patches prepattern, thickness 1 line between
-            if ( ((elem_index%6)<5)&&((int)(elem_index/12)<5) ){
-              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            }
-            else if ( ((elem_index%6)<5)&&((int)(elem_index/12)<11) &&((int)(elem_index/12)>5) ){
-              initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
-            }
-            else{
-              initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
-            }
-            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf()); 
+            // // regular 5x5 patches prepattern, thickness 1 line between
+            // if ( ((elem_index%6)<5)&&((int)(elem_index/12)<5) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else if ( ((elem_index%6)<5)&&((int)(elem_index/12)<11) &&((int)(elem_index/12)>5) ){
+            //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
+            // }
+            // else{
+            //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
+            // }
+            
+            initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());  
             initial_conditions.push_back(0.1*RandomNumberGenerator::Instance()->ranf());
             DeltaNotchReporterSrnModelLimi* p_srn_model = new DeltaNotchReporterSrnModelLimi();
             p_srn_model->SetInitialConditions(initial_conditions);
@@ -311,7 +321,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("12x12Periodic5x5RegularPatchesLt1Notch");
+        simulator.SetOutputDirectory("12x12StripesDeltaNotchDifferent3PatchesStripes");
         simulator.SetSamplingTimestepMultiple(40);
         simulator.SetEndTime(20.0);
 
