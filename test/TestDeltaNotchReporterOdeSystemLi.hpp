@@ -55,6 +55,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //This test is always run sequentially (never in parallel)
 #include "FakePetscSetup.hpp"
 
+// test Delta/Notch/Reporter ODE system (without mutual inactivation)
 class TestDeltaNotchReporterOdeSystemLi : public CxxTest::TestSuite
 {
 public:

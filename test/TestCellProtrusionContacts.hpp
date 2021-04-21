@@ -57,7 +57,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "DifferentiatedCellProliferativeType.hpp"
 
-
+// check that adding protrusional contacts as a cell property similar to the
+// nearest neighbours cell property functions as expected.
 class TestCellProtrusionContacts : public AbstractCellBasedTestSuite
 {
 public:

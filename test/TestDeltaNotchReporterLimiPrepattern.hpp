@@ -42,11 +42,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#ifndef TESTDELTANOTCHREPORTER12x12PERIODICLIMIPREPATTERN_HPP_
-#define TESTDELTANOTCHREPORTER12x12PERIODICLIMIPREPATTERN_HPP_
+#ifndef TESTDELTANOTCHREPORTERLIMIPREPATTERN_HPP_
+#define TESTDELTANOTCHREPORTERLIMIPREPATTERN_HPP_
 
 /*
- * = An example showing how to run Delta/Notch simulations =
+ * = An example showing how to run Delta/Notch simulations with a prepattern =
  *
  * EMPTYLINE
  *
@@ -55,15 +55,20 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * EMPTYLINE
  *
  * In this tutorial we show how Chaste can be used to simulate a growing cell monolayer culture
- * into which a simple model of Delta/Notch signalling is incorporated. This model was developed
- * by Collier et al. ("Pattern formation by lateral inhibition with feedback: a mathematical
- * model of delta-notch intercellular signalling", J. Theor. Biol. 183:429-446) and comprises
- * two ODEs to describe the evolution in concentrations of Delta and Notch in each cell. The ODE
- * for Notch includes a reaction term that depends on the mean Delta concentration among neighbouring
- * cells. Thus in this simulation each cell needs to be able to access information about its
- * neighbours. We use the {{{CellData}}} class to facilitate this, and introduce a subclass
+ * into which a model of Delta/Notch/Reporter signalling with mutual inactivation is incorporated. 
+ * This model was developed by Sprinzak et al. (Sprinzak D, Lakhanpal A, LeBon L, Garcia-Ojalvo J, Elowitz MB (2011) 
+ * "Mutual Inactivation of Notch Receptors and Ligands Facilitates Developmental Patterning". 
+ * PLoS Comput Biol 7(6): e1002069. https://doi.org/10.1371/journal.pcbi.1002069) 
+ * This comprises three ODEs to describe the evolution in concentrations of Delta, Notch, and a 
+ * Reporter of Notch Intracellular Domain in each cell. The ODEs
+ * for Notch and Delta include a reaction term that depends on the mean Delta and mean Notch
+ * concentration among neighbouring cells. Thus in this simulation each cell needs to be able to 
+ * access information about its neighbours. We use the {{{CellData}}} class to facilitate this, and introduce a subclass
  * of {{{OffLatticeSimulation}}} called {{{DeltaNotchOffLatticeSimulation}}} to handle the updating
  * of {{{CellData}}} at each time step as cell neighbours change.
+ * 
+ * We additionally add the option of a prepattern in the initial conditions, which has been suggested
+ * to increase consistency and predictability of patterning.
  *
  * EMPTYLINE
  *
@@ -101,44 +106,37 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "UniformG1GenerationalCellCycleModel.hpp"
 /*
  * The next header file defines a simple subcellular reaction network model that includes the functionality
- * for solving each cell's Delta/Notch signalling ODE system at each time step, using information about neighbouring
+ * for solving each cell's Delta/Notch/Reporter signalling ODE system at each time step, using information about neighbouring
  * cells through the {{{CellData}}} class.
  */
 #include "DeltaNotchReporterSrnModelLimi.hpp"
 /*
- * The next header defines the simulation class modifier corresponding to the Delta-Notch SRN model.
+ * The next header defines the simulation class modifier corresponding to the Delta-Notch-Reporter SRN model.
  * This modifier leads to the {{{CellData}}} cell property being updated at each timestep to deal with Delta-Notch signalling.
  */
 #include "DeltaNotchReporterTrackingModifier.hpp"
 
 /* Having included all the necessary header files, we proceed by defining the test class.
  */
-class TestDeltaNotchReporter12x12PeriodicLimiPrepattern : public AbstractCellBasedTestSuite
+class TestDeltaNotchReporterLimiPrepattern : public AbstractCellBasedTestSuite
 {
 public:
 
-    /*
-     * EMPTYLINE
-     *
-     * == Test 1: a periodic vertex-based monolayer with Delta/Notch signalling ==
-     *
-     * EMPTYLINE
-     *
-     * In the first test, we demonstrate how to simulate a monolayer that incorporates
-     * Delta/Notch signalling, using a vertex-based approach.
-     */
     void TestVertexBasedMonolayerWithDeltaNotch()
     {
         /* We include the next line because Vertex simulations cannot be run in parallel */
         EXIT_IF_PARALLEL;
 
-        /* First we create a 7x7 cylindrical vertex mesh for periodicity in the x-direction. */
+        /* First we create a 7x7 cylindrical vertex mesh for periodicity in the x-direction. 
+        * Only periodic boundary conditions were considered with a prepattern to maintain
+        * consistency of pattern. */
         CylindricalHoneycombVertexMeshGenerator generator(12, 12);
         Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
 
         /* We then create some cells, each with a cell-cycle model, {{{UniformG1GenerationalCellCycleModel}}} and a subcellular reaction network model
-         * {{{DeltaNotchSrnModel}}}, which
-         * incorporates a Delta/Notch ODE system, here we use the hard coded initial conditions of 1.0 and 1.0.
+         * {{{DeltaNotchReporterSrnModelLimi}}}, which incorporates a Delta/Notch/Reporter ODE system with mutual inactivation,
+         * as developed by Sprinzak et al (2011)
+         * 
          * In this example we choose to make each cell differentiated,
          * so that no cell division occurs. */
         std::vector<CellPtr> cells;
@@ -150,24 +148,35 @@ public:
             UniformG1GenerationalCellCycleModel* p_cc_model = new UniformG1GenerationalCellCycleModel();
             p_cc_model->SetDimension(2);
 
-            /* For prepatterns, only stripes appear to affect the final pattern. Due to the 12x12
-            form of the grid, strips can be made by taking any value modulo 3, 4 or 6 (divisors of 12).
-            Thickness of the prepattern stripes is determined by the value of the remainder.*/
+            /* Prepatterns considered were stripes or patches. For stripes, due to the 12x12
+            * form of the grid, stripes can be made by taking any value modulo 3, 4 or 6 (divisors of 12).
+            * Thickness of the prepattern stripes is determined by the value of the remainder.
+            *
+            * EMPTYLINE
+            * 
+            * The prepattern was initialised in Notch, but this can be modified to be in Delta by
+            * initialising the value of Notch before assigning the patterned intitial conditions. 
+            */
             std::vector<double> initial_conditions;
-            // mod 2 striped prepattern           
+            //
+            // uncomment the desired prepattern 
+            //
+            // // mod 2 striped prepattern           
             // if ((elem_index%2)<1){
             //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             //   }
             //   else{
             //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //   }
-            // mod 3 striped prepattern
+            //
+            // // mod 3 striped prepattern
             //  if ((elem_index%3)<2){
             //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             //   }
             //   else{
             //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //   }
+            // 
             // mod 4 striped prepattern
                if ((elem_index%4)<2){
                   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -175,6 +184,7 @@ public:
                 else{
                   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
                 }
+            //
             // // mod 4 striped prepattern in other direction
             //    if (((int)(elem_index/12)%4)<2){
             //       initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -182,8 +192,7 @@ public:
             //     else{
             //       initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //     }
-
-            
+            //
             // // mod 6 striped prepattern
             //   if ((elem_index%6)<4){
             //     initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -191,6 +200,10 @@ public:
             //   else{
             //     initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             //   }
+
+            /* Patches can also be considered as a prepattern. These are slightly more difficult to 
+            * implement, as careful consideration of the grid geometry must be taken.*/
+            //
             // // offset 2x2 patches prepattern, lines thickness 1, 2
             // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -207,6 +220,7 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
+            //
             // // offset 2x2 patches prepattern, lines thickness 1
             // if ( (((elem_index + 1)%3)<2)&&((int)(elem_index/12)<2) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -223,7 +237,8 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
-            // regular 2x2 patches prepattern, thickness 2 line between
+            //
+            // // regular 2x2 patches prepattern, thickness 2 line between
             // if ( ((elem_index%4)<2)&&((int)(elem_index/12)<2) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
             // }
@@ -252,6 +267,7 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
+            //
             // // regular 3x3 patches prepattern, thickness 1 line between
             // if ( ((elem_index%4)<3)&&((int)(elem_index/12)<3) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -265,6 +281,7 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
+            //
             // // regular 4x4 patches prepattern, thickness 2 line between
             // if ( ((elem_index%6)<4)&&((int)(elem_index/12)<4) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -275,6 +292,7 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
+            //
             // // offset 4x4 patches prepattern, thickness 2 line between
             // if ( ((elem_index%6)<4)&&((int)(elem_index/12)<4) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -285,6 +303,7 @@ public:
             // else{
             //   initial_conditions.push_back(9.0 + 1.0*RandomNumberGenerator::Instance()->ranf());
             // }
+            //
             // // regular 5x5 patches prepattern, thickness 1 line between
             // if ( ((elem_index%6)<5)&&((int)(elem_index/12)<5) ){
             //   initial_conditions.push_back(RandomNumberGenerator::Instance()->ranf());
@@ -346,15 +365,7 @@ public:
      *
      * Load the file {{{/tmp/$USER/testoutput/TestVertexBasedMonolayerWithDeltaNotch/results_from_time_0/results.pvd}}}.
      *
-     * EMPTYLINE
-     *
-     * == Test 2 - a node-based monolayer with Delta/Notch signalling ==
-     *
-     * EMPTYLINE
-     *
-     * In the next test we run a similar simulation as before, but this time with node-based
-     * 'overlapping spheres' model.
      */
 };
 
-#endif /*TESTDELTANOTCHREPORTER12x12PERIODICLIMIPREPATTERN_HPP_*/
+#endif /*TESTDELTANOTCHREPORTERLIMIPREPATTERN_HPP_*/

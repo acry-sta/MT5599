@@ -42,11 +42,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *
  */
 
-#ifndef TESTFINALMODEL_HPP_
-#define TESTFINALMODEL_HPP_
+#ifndef TESTDELTANOTCHREPORTERPROTRUSIONLIMIDIVISIONCONTROL_HPP_
+#define TESTDELTANOTCHREPORTERPROTRUSIONLIMIDIVISIONCONTROL_HPP_
 
 /*
- * = An example showing how to run Delta/Notch simulations =
+ * = Delta/Notch simulations with cellular protrusions and Notch-dependent cell division =
  *
  * EMPTYLINE
  *
@@ -55,17 +55,33 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * EMPTYLINE
  *
  * In this tutorial we show how Chaste can be used to simulate a growing cell monolayer culture
- * into which a simple model of Delta/Notch signalling is incorporated. This model was developed
- * by Collier et al. ("Pattern formation by lateral inhibition with feedback: a mathematical
- * model of delta-notch intercellular signalling", J. Theor. Biol. 183:429-446) and comprises
- * two ODEs to describe the evolution in concentrations of Delta and Notch in each cell. The ODE
- * for Notch includes a reaction term that depends on the mean Delta concentration among neighbouring
- * cells. Thus in this simulation each cell needs to be able to access information about its
- * neighbours. We use the {{{CellData}}} class to facilitate this, and introduce a subclass
- * of {{{OffLatticeSimulation}}} called {{{DeltaNotchOffLatticeSimulation}}} to handle the updating
- * of {{{CellData}}} at each time step as cell neighbours change.
+ * into which a model of Delta/Notch/Reporter signalling with mutual inactivation is incorporated. 
+ * This model was developed by Sprinzak et al. (Sprinzak D, Lakhanpal A, LeBon L, Garcia-Ojalvo J, Elowitz MB (2011) 
+ * "Mutual Inactivation of Notch Receptors and Ligands Facilitates Developmental Patterning". 
+ * PLoS Comput Biol 7(6): e1002069. https://doi.org/10.1371/journal.pcbi.1002069) 
+ * This comprises three ODEs to describe the evolution in concentrations of Delta, Notch, and a 
+ * Reporter of Notch Intracellular Domain in each cell. 
+ * 
+ * EMPTYLINE
+ * 
+ * The possibility of signalling through cellular protrusions is included, as based on models by
+ * Baum et al. (2016) and Bajpai et al. (2020). The ODEs
+ * for Notch and Delta include a reaction term that depends on the mean Delta and mean Notch
+ * concentration among cells in junctional contact and in protrusional. 
+ * Thus in this simulation each cell needs to be able to access information about its neighbours 
+ * and its protrusional contacts. We use the {{{CellData}}} class to facilitate this, 
+ * and introduce a new CellProperty for protruional contacts. 
+ * A tracking modifier "DeltaNotchReporterProtrusionTrackingModifier" is introduced to update 
+ * the relevant parameters at each time step.
  *
  * EMPTYLINE
+ *
+ * This test is used as a control for Notch-dependent cell division, as suggested by Hunter et al. (2016)
+ * Ginger L. Hunter, Zena Hadjivasiliou, Hope Bonin, Li He, Norbert Perrimon, Guillaume Charras, Buzz Baum; 
+ * "Coordinated control of Notch/Delta signalling and cell cycle progression drives lateral inhibition-mediated tissue patterning". 
+ * Development 1 July 2016; 143 (13): 2305–2310. doi: https://doi.org/10.1242/dev.134213
+ * For comparison of results obtained with Notch-dependent cell division, we assume that cells have a fixed
+ * probability of division at each time step. This is achieved through Chaste's base {{{FixedProbabilityCellCycleModel}}}
  *
  * == The test ==
  *
@@ -98,58 +114,39 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CellProliferativeTypesCountWriter.hpp"
 #include "SmartPointers.hpp"
 #include "PetscSetupAndFinalize.hpp"
-#include "ReporterDependentCellCycleModel.hpp"
-#include "TransitCellProliferativeType.hpp"
 
-/*
- * The next header file defines a simple subcellular reaction network model that includes the functionality
- * for solving each cell's Delta/Notch signalling ODE system at each time step, using information about neighbouring
- * cells through the {{{CellData}}} class.
- */
+#include "FixedProbabilityCellCycleModel.hpp"
+#include "TransitCellProliferativeType.hpp"
 #include "DeltaNotchReporterProtrusionSrnModelLimi.hpp"
-/*
- * The next header defines the simulation class modifier corresponding to the Delta-Notch SRN model.
- * This modifier leads to the {{{CellData}}} cell property being updated at each timestep to deal with Delta-Notch signalling.
- */
 #include "DeltaNotchReporterProtrusionDifferentiationTrackingModifier.hpp"
 
-/* Having included all the necessary header files, we proceed by defining the test class.
- */
-class TestFinalModel : public AbstractCellBasedTestSuite
+class TestDeltaNotchReporterProtrusionLimiDivisionControl : public AbstractCellBasedTestSuite
 {
 public:
 
-    /*
-     * EMPTYLINE
-     *
-     * == Test 1: a periodic vertex-based monolayer with Delta/Notch signalling ==
-     *
-     * EMPTYLINE
-     *
-     * In the first test, we demonstrate how to simulate a monolayer that incorporates
-     * Delta/Notch signalling, using a vertex-based approach.
-     */
     void TestVertexBasedMonolayerWithDeltaNotch()
     {
         /* We include the next line because Vertex simulations cannot be run in parallel */
         EXIT_IF_PARALLEL;
 
-        /* First we create a 50x50 vertex mesh to run our simulations in. A large mesh is required
-        for the patterning impact to appear. This may also be necessary for prepatterning as well. 
+        /* First we create a vertex mesh to run our simulations in. A large mesh is required
+        for the patterning impact to appear.  
         */
         HoneycombVertexMeshGenerator generator(12, 12);
         MutableVertexMesh<2,2>* p_mesh = generator.GetMesh();
 
         // // option to create a cylindrical vertex mesh for periodicity in the x-direction. 
-        // CylindricalHoneycombVertexMeshGenerator generator(50, 50);
+        // CylindricalHoneycombVertexMeshGenerator generator(12, 12);
         // Cylindrical2dVertexMesh* p_mesh = generator.GetCylindricalMesh();
 
-        /* We then create some cells, each with a cell-cycle model, {{{UniformG1GenerationalCellCycleModel}}} and a subcellular reaction network model
-         * {{{DeltaNotchReporterProtrusionSrnModelLimi}}}, which
-         * incorporates a Delta/Notch/Reporter ODE system with protrusion and cis-inhibition, 
-         * here we use the hard coded initial conditions of 1.0 and 1.0.
-         * In this example we choose to make each cell differentiated,
-         * so that no cell division occurs. */
+        /* We then create some cells, each with a subcellular reaction network model
+         * {{{DeltaNotchReporterProtrusionSrnModelLimi}}}, which incorporates a Delta/Notch/Reporter ODE system 
+         * with protrusional contacts and mutual inactivation,
+         * as developed by Sprinzak et al (2011) and Baum et al (2016)
+         * We choose to initialise the concentrations of Notch and Delta to random levels in [0, 1] 
+         * in each cell. Similarly the concentration of Reporter in each cell is randomly initialized, but
+         * to a very low value.
+         * */
         std::vector<CellPtr> cells;
         MAKE_PTR(WildTypeCellMutationState, p_state);
         MAKE_PTR(TransitCellProliferativeType, p_transit_type);
@@ -157,7 +154,9 @@ public:
 
         for (unsigned elem_index=0; elem_index<p_mesh->GetNumElements(); elem_index++)
         {
-            ReporterDependentCellCycleModel* p_transit_model = new ReporterDependentCellCycleModel();
+            /* We begin by assigning the cell a CellCycle model which passes a fixed probability of division
+            * at each time step to the cells. No cell phases are modelled. */
+            FixedProbabilityCellCycleModel* p_transit_model = new FixedProbabilityCellCycleModel();
             
             /* We choose to initialise the concentrations of Notch and Delta to random levels 
             in each cell. Similarly the concentration of Reporter in each cell is randomly initialized, but
@@ -195,7 +194,7 @@ public:
         /* We are now in a position to create and configure the cell-based simulation object, pass a force law to it,
          * and run the simulation. We can make the simulation run for longer to see more patterning by increasing the end time. */
         OffLatticeSimulation<2> simulator(cell_population);
-        simulator.SetOutputDirectory("Experiment");
+        simulator.SetOutputDirectory("Attempt6AllDirL1Tl0.25");
         simulator.SetSamplingTimestepMultiple(20);
         simulator.SetEndTime(10.0);
 
@@ -216,4 +215,4 @@ public:
 
 };
 
-#endif /*TESTFINALMODEL_HPP_*/
+#endif /*TESTDELTANOTCHREPORTERPROTRUSIONLIMIDIVISIONCONTROL_HPP_*/

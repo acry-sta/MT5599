@@ -190,12 +190,7 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
         {
             // get location index of possible contact
             unsigned index_B = rCellPopulation.GetLocationIndexUsingCell(*possible_contact_cell_iter);
-
-            // possible implementation, although the confusion of elements/nodes in the vertex mesh 
-            // means this is confusing
-            // c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(r_mesh.GetNode(index_A)->rGetLocation(), r_mesh.GetNode(index_B)->rGetLocation());
-            // c_vector<double, DIM> unit_vector_between_cells = vector_between_cells/norm_2(vector_between_cells);
-            
+ 
             c_vector<double, DIM> location_vector_B = rCellPopulation.GetLocationOfCellCentre(*possible_contact_cell_iter);
             location_vector_B = location_vector_B - middle_location;
             c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(location_vector_A, location_vector_B);
@@ -226,20 +221,19 @@ void DeltaNotchReporterProtrusionTrackingModifier<DIM>::SetProtrusionNeighbours(
                     // double dot_product_2;
                     // dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[0] + unit_vector_between_cells[1]*unit_location_vector_B[1];
 
-                    // polarized projections; projections point in a circle
-                    c_vector<double, DIM> unit_location_vector_A = location_vector_A/norm_2(location_vector_A);
-                    c_vector<double, DIM> unit_location_vector_B = location_vector_B/norm_2(location_vector_B);
-                    double dot_product_1;
-                    dot_product_1 = unit_vector_between_cells[0]*unit_location_vector_A[1] - unit_vector_between_cells[1]*unit_location_vector_A[0];
-                    double dot_product_2;
-                    dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[1] - unit_vector_between_cells[1]*unit_location_vector_B[0];
-
-
-                    // // if all cells have same angle of protrusion
+                    // // polarized projections; projections point in a circle
+                    // c_vector<double, DIM> unit_location_vector_A = location_vector_A/norm_2(location_vector_A);
+                    // c_vector<double, DIM> unit_location_vector_B = location_vector_B/norm_2(location_vector_B);
                     // double dot_product_1;
-                    // dot_product_1 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
+                    // dot_product_1 = unit_vector_between_cells[0]*unit_location_vector_A[1] - unit_vector_between_cells[1]*unit_location_vector_A[0];
                     // double dot_product_2;
-                    // dot_product_2 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
+                    // dot_product_2 = unit_vector_between_cells[0]*unit_location_vector_B[1] - unit_vector_between_cells[1]*unit_location_vector_B[0];
+
+                    // if all cells have same angle of protrusion
+                    double dot_product_1;
+                    dot_product_1 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
+                    double dot_product_2;
+                    dot_product_2 = unit_vector_between_cells[0]*cos(this_protrusion_angle) + unit_vector_between_cells[1]*sin(this_protrusion_angle);
                     if ( (0.5*(dot_product_1*dot_product_1 + dot_product_2*dot_product_2)) > angular_activation_threshold)
                     {
                         protrusion_contact_indices.insert(index_B);

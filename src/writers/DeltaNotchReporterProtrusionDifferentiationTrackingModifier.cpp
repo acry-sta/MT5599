@@ -228,11 +228,6 @@ void DeltaNotchReporterProtrusionDifferentiationTrackingModifier<DIM>::SetProtru
         {
             // get location index of possible contact
             unsigned index_B = rCellPopulation.GetLocationIndexUsingCell(*possible_contact_cell_iter);
-
-            // possible implementation, although the confusion of elements/nodes in the vertex mesh 
-            // means this is confusing
-            // c_vector<double, DIM> vector_between_cells = r_mesh.GetVectorFromAtoB(r_mesh.GetNode(index_A)->rGetLocation(), r_mesh.GetNode(index_B)->rGetLocation());
-            // c_vector<double, DIM> unit_vector_between_cells = vector_between_cells/norm_2(vector_between_cells);
             
             c_vector<double, DIM> location_vector_B = rCellPopulation.GetLocationOfCellCentre(*possible_contact_cell_iter);
             location_vector_B = location_vector_B - middle_location;

@@ -55,6 +55,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //This test is always run sequentially (never in parallel)
 #include "FakePetscSetup.hpp"
 
+// Test a minor adjustment of the ODE system used by Collier et al. 
 class TestDeltaNotchOdeSystemAdjusted : public CxxTest::TestSuite
 {
 public:
