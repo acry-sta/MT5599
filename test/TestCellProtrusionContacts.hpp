@@ -312,55 +312,6 @@ public:
 
     }
 
-    void TestCellVecData()
-    {
-        SimulationTime* p_simulation_time = SimulationTime::Instance();
-        p_simulation_time->SetEndTimeAndNumberOfTimeSteps(25, 2);
-
-        boost::shared_ptr<AbstractCellProperty> p_healthy_state(CellPropertyRegistry::Instance()->Get<WildTypeCellMutationState>());
-        boost::shared_ptr<AbstractCellProperty> p_type(CellPropertyRegistry::Instance()->Get<StemCellProliferativeType>());
-
-        FixedG1GenerationalCellCycleModel* p_cell_model = new FixedG1GenerationalCellCycleModel();
-        CellPtr p_cell(new Cell(p_healthy_state, p_cell_model));
-        p_cell->SetCellProliferativeType(p_type);
-        p_cell->InitialiseCellCycleModel();
-
-        // Add property CellProtrusionContacts
-        MAKE_PTR(CellProtrusionContacts, p_protrusion_contacts);
-        p_cell->AddCellProperty(p_protrusion_contacts);
-        TS_ASSERT(p_cell->rGetCellPropertyCollection().HasPropertyType<CellProtrusionContacts>());
-
-        CellPropertyCollection parent_cell_property_collection = p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
-        boost::shared_ptr<CellProtrusionContacts> p_parent_cell_protrusion_contacts = boost::static_pointer_cast<CellProtrusionContacts>(parent_cell_property_collection.GetProperty());
-
-        std::set<unsigned> indices_example;
-        indices_example.insert(1);
-        indices_example.insert(3);
-        p_parent_cell_protrusion_contacts->SetCellProtrusionContacts(indices_example);
-
-        p_simulation_time->IncrementTimeOneStep();
-        p_simulation_time->IncrementTimeOneStep();
-
-        TS_ASSERT_EQUALS(p_cell->ReadyToDivide(), true);
-
-        CellPtr p_daughter_cell = p_cell->Divide();
-
-        std::set<unsigned> replacement_indices_example;
-        replacement_indices_example.insert(2);
-        CellPropertyCollection parent_cell_property_collection_now = p_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
-        boost::shared_ptr<CellProtrusionContacts> p_parent_cell_protrusion_contacts_now = boost::static_pointer_cast<CellProtrusionContacts>(parent_cell_property_collection_now.GetProperty());
-
-        p_parent_cell_protrusion_contacts_now->SetCellProtrusionContacts(replacement_indices_example);
-
-        TS_ASSERT_EQUALS(p_parent_cell_protrusion_contacts_now->GetCellProtrusionContacts(), replacement_indices_example);
-
-        CellPropertyCollection daughter_cell_property_collection = p_daughter_cell->rGetCellPropertyCollection().GetPropertiesType<CellProtrusionContacts>();
-        boost::shared_ptr<CellProtrusionContacts> p_daughter_cell_protrusion_contacts = boost::static_pointer_cast<CellProtrusionContacts>(daughter_cell_property_collection.GetProperty());
-
-        TS_ASSERT_EQUALS(p_daughter_cell_protrusion_contacts->GetCellProtrusionContacts(), indices_example);
-    
-    }
-
     void TestDifferentCellProtrusionContacts()
     {
         SimulationTime* p_simulation_time = SimulationTime::Instance();
