@@ -75,6 +75,7 @@ bool ReporterDependentCellCycleModel::ReadyToDivide()
             {
                 RandomNumberGenerator* p_gen = RandomNumberGenerator::Instance();
                 double division_probability;
+                // calculate division probability based on Hunter et al (2016)
                 division_probability = std::pow(reporter, mHillCoefficient)/(std::pow(mDissociationConstant, mHillCoefficient) + std::pow(reporter, mHillCoefficient));
                 if (p_gen->ranf() < division_probability*dt)
                 {
@@ -138,12 +139,12 @@ double ReporterDependentCellCycleModel::GetMinimumDivisionSimulationTime()
 
 double ReporterDependentCellCycleModel::GetAverageTransitCellCycleTime()
 {
-    return 0.0;
+    return 0.0; // this is not determined
 }
 
 double ReporterDependentCellCycleModel::GetAverageStemCellCycleTime()
 {
-    return 0.0;
+    return 0.0; // stem cells are not modelled so this is redundant
 }
 
 void ReporterDependentCellCycleModel::OutputCellCycleModelParameters(out_stream& rParamsFile)

@@ -43,7 +43,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "AbstractOdeSrnModel.hpp"
 
 /**
- * A subclass of AbstractOdeSrnModel that includes a Delta-Notch ODE system in the sub-cellular reaction network.
+ * A subclass of AbstractOdeSrnModel that includes a Delta-Notch-Reporter with mutual inactivation
+ * ODE system in the sub-cellular reaction network.
  *
  * \todo #2752 document this class more thoroughly here
  */
@@ -112,7 +113,7 @@ public:
     void SimulateToCurrentTime();
 
     /**
-     * Update the current levels of Delta and Notch in the cell.
+     * Update the current levels of Delta, Notch, and Reporter in the cell.
      *
      * N.B. Despite the name, this doesn't update the levels of delta or notch, or compute mean levels.
      * It just copies the current mean delta from the CellData
@@ -133,7 +134,7 @@ public:
     double GetDelta();
 
     /**
-     * @return the current Delta level in this cell.
+     * @return the current Reporter level in this cell.
      */
     double GetReporter();
 

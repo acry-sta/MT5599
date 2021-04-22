@@ -43,8 +43,9 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * dividing per hour.
  *
  * The class includes two parameters: the first, mDivisionProbability, defines the probability
- * of dividing per hour; the second, mMinimumDivisionAge, defines a minimum age at which cells
- * may divide.
+ * of dividing per hour; the second, mMinimumDivisionSimulationTime, defines a minimum time the simulation
+ * must run before cells may divide. This is adapted from Chaste's base Bernoulli Cell Cycle model 
+ * for comparison of our Notch-dependent cell division model.
  */
 class FixedProbabilityCellCycleModel : public AbstractCellCycleModel
 {
@@ -106,13 +107,7 @@ public:
     /**
      * Overridden ReadyToDivide() method.
      * 
-     * Division is dependent on Reporter expression in the cell, and can only occur
-     * once the simulation has run a certain minimum time. If the simulation time is 
-     * greater than mMinimumDivisionSimulationTime, then we draw a uniform
-     * random number r ~ U[0,1] and retrieve the cell's reporter expression R.
-     * If r < (R^q)/(K^q + R^q)*dt, where dt is the
-     * simulation time step, then the cell is ready to divide and we return true.
-     * Otherwise, the cell is not yet ready to divide and we return false.
+     * Division probability is fixed at each time step.
      *
      * @return whether the cell is ready to divide.
      */

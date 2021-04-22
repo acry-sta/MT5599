@@ -43,7 +43,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "CellProtrusionContacts.hpp"
 
 /**
- * A modifier class in which the mean levels of Delta in neighbouring cells
+ * A modifier class in which the mean levels of Delta and Notch in neighbouring cells
+ * and in cells which are in protrusional contact
  * are computed and stored in CellData. To be used in conjunction with Delta
  * Notch cell cycle models.
  */

@@ -40,11 +40,14 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /**
  * Simple cell-cycle model where mature non-differentiated cells have a specified probability of
- * dividing per hour.
+ * dividing per hour, which depends on Notch. Model based on Hunter et al (2016)
+ * "Coordinated control of Notch/Delta signalling and cell cycle progression drives lateral inhibition-mediated tissue patterning."
+ * Development 1 July 2016; 143 (13): 2305–2310. doi: https://doi.org/10.1242/dev.134213
  *
- * The class includes two parameters: the first, mDivisionProbability, defines the probability
- * of dividing per hour; the second, mMinimumDivisionAge, defines a minimum age at which cells
- * may divide.
+ * The class includes two parameters: the first two, mDissociationContstant and mHillCoefficient, 
+ * define the parameters of the Hill function which links the probability of dividing per hour with Reporter expression;
+ * the second, mMinimumSimulationTime, defines a minimum simulation time at which cells
+ * may divide to ensure the tissue grows and develops first.
  */
 class ReporterDependentCellCycleModel : public AbstractCellCycleModel
 {

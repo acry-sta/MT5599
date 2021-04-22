@@ -46,6 +46,7 @@ DeltaNotchReporterProtrusionOdeSystemLimi::DeltaNotchReporterProtrusionOdeSystem
      *
      * 0 - Notch concentration for this cell
      * 1 - Delta concentration for this cell
+     * 2 - Reporter concentration for this cell
      *
      * We store the last state variable so that it can be written
      * to file at each time step alongside the others, and visualized.
@@ -55,16 +56,34 @@ DeltaNotchReporterProtrusionOdeSystemLimi::DeltaNotchReporterProtrusionOdeSystem
     SetDefaultInitialCondition(1, 1.0); // soon overwritten
     SetDefaultInitialCondition(2, 1.0); // soon overwritten
 
+    /**
+     * The parameters are as follows:
+     *
+     * 0 - mean Notch concentration of junctional contacts
+     * 1 - mean Delta concentration of junctional contacts
+     * 2 - mean Notch concentration of protrusional contacts
+     * 3 - mean Delta concentration of protrusional contacts
+     * 4 - Protrusion length l
+     * 5 - Protrusion tip length Dl
+     * 6 - Protrusion angle theta
+     * 7 - Protrusion anglular opening Dtheta
+     * 8 - Angular activation threshold W
+     *
+     * We store the last state variable so that it can be written
+     * to file at each time step alongside the others, and visualized.
+     */
+
     this->mParameters.push_back(0.5); // mean notch initial value
     this->mParameters.push_back(0.5); // mean delta initial value
 
     this->mParameters.push_back(0.5); // protrusion-mediated mean notch initial value
     this->mParameters.push_back(0.5); // protrusion-mediated mean delta initial value
 
-    // the following parameters specify the protrusions; these should be possible to overwrite
-    // during setup of the test, however leaving their initialisation here is fine as well
-    this->mParameters.push_back(1.0); // protrusion length initial value
-    this->mParameters.push_back(1.0); // protrusion tip length initial value
+    /* The following parameters specify the protrusions.
+    * Note that to increase flexibility, these could be overwritten when each cell is initialised.
+    * Currently protrusions are uniform in the tissue. */
+    this->mParameters.push_back(2.0); // protrusion length initial value
+    this->mParameters.push_back(0.5); // protrusion tip length initial value
     
     this->mParameters.push_back(0.5*M_PI); // protrusion angle initial value
     this->mParameters.push_back(0.5*M_PI); // protrusion angular opening initial value
@@ -103,7 +122,7 @@ void DeltaNotchReporterProtrusionOdeSystemLimi::EvaluateYDerivatives(double time
     // in trans that leads to a Notch signal in the receiving cell
     double weighted_delta_out = 0.01 * mean_delta + 0.1 * protrusion_delta;
 
-    // The next two lines define the ODE system by Baum et al. (2016)
+    // The next three lines define the ODE system by Sprinzak et al. (2011) and used by Baum et al. (2016)
     rDY[0] = 100.0 - notch - notch*weighted_delta_in/2.0 - notch*delta/0.5;  // d[Notch]/dt
     rDY[1] = 100.0/(1.0 + reporter*reporter*reporter) - delta - delta*weighted_notch_in/2.0 - notch*delta/0.5;   // d[Delta]/dt
     rDY[2] = 300000.0*notch*weighted_delta_out*notch*weighted_delta_out*notch*weighted_delta_out/(100000.0 + notch*weighted_delta_out*notch*weighted_delta_out*notch*weighted_delta_out) - reporter;   // d[Reporter]/dt

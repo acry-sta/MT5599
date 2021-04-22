@@ -65,14 +65,13 @@ bool FixedProbabilityCellCycleModel::ReadyToDivide()
     {
         SimulationTime* p_simulation_time = SimulationTime::Instance();
         double time = p_simulation_time->GetTime();
-        if (time > mMinimumDivisionSimulationTime)
+        if (time > mMinimumDivisionSimulationTime) // cells only allowed to divide after min sim time
         {
-            double reporter = mpCell->GetCellData()->GetItem("reporter");
             double dt = p_simulation_time->GetTimeStep();
             if (!(mpCell->GetCellProliferativeType()->IsType<DifferentiatedCellProliferativeType>()))
             {
                 RandomNumberGenerator* p_gen = RandomNumberGenerator::Instance();
-                if (p_gen->ranf() < mDivisionProbability*dt)
+                if (p_gen->ranf() < mDivisionProbability*dt) // generate a random number to compare with fixed probability
                 {
                     mReadyToDivide = true;
                 }
@@ -124,12 +123,12 @@ double FixedProbabilityCellCycleModel::GetMinimumDivisionSimulationTime()
 
 double FixedProbabilityCellCycleModel::GetAverageTransitCellCycleTime()
 {
-    return 1.0/mDivisionProbability;
+    return 1.0/mDivisionProbability; // probably not correct
 }
 
 double FixedProbabilityCellCycleModel::GetAverageStemCellCycleTime()
 {
-    return 1.0/mDivisionProbability;
+    return 1.0/mDivisionProbability; // stem cells are not included, this is redundant
 }
 
 void FixedProbabilityCellCycleModel::OutputCellCycleModelParameters(out_stream& rParamsFile)

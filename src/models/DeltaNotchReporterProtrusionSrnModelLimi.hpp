@@ -43,7 +43,8 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "AbstractOdeSrnModel.hpp"
 
 /**
- * A subclass of AbstractOdeSrnModel that includes a Delta-Notch ODE system in the sub-cellular reaction network.
+ * A subclass of AbstractOdeSrnModel that includes a Delta-Notch-Reporter ODE system 
+ * with mutual inactivation and cellular protrusions in the sub-cellular reaction network.
  *
  * \todo #2752 document this class more thoroughly here
  */

@@ -44,11 +44,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "AbstractOdeSystem.hpp"
 
-/**
- * Represents the Delta-Notch-Reporter ODE system described by Sprinzak et al,
- * "Pattern formation by lateral inhibition with feedback: a mathematical
- * model of delta-notch intercellular signalling" (Journal of Theoretical
- * Biology 183:429-446, 1996).
+/*
+ * Represents the Delta-Notch-Reporter ODE system described by Sprinzak et al. (2011)
+ * "Mutual Inactivation of Notch Receptors and Ligands Facilitates Developmental Patterning"
+ * PLoS Comput Biol 7(6): e1002069. https://doi.org/10.1371/journal.pcbi.1002069
+ * This system of ODEs incorporates Delta-Notch-Reporter with mutual inactivation.
  */
 class DeltaNotchReporterOdeSystemLimi : public AbstractOdeSystem
 {

@@ -36,6 +36,7 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "DeltaNotchReporterOdeSystemLi.hpp"
 #include "CellwiseOdeSystemInformation.hpp"
 
+
 DeltaNotchReporterOdeSystemLi::DeltaNotchReporterOdeSystemLi(std::vector<double> stateVariables)
     : AbstractOdeSystem(3)
 {
@@ -46,6 +47,7 @@ DeltaNotchReporterOdeSystemLi::DeltaNotchReporterOdeSystemLi(std::vector<double>
      *
      * 0 - Notch concentration for this cell
      * 1 - Delta concentration for this cell
+     * 2 - Reporter concentration for this cell 
      *
      * We store the last state variable so that it can be written
      * to file at each time step alongside the others, and visualized.
@@ -77,9 +79,7 @@ void DeltaNotchReporterOdeSystemLi::EvaluateYDerivatives(double time, const std:
     double mean_notch = this->mParameters[0]; // Shorthand for "this->mParameter("Mean Notch");"
     double mean_delta = this->mParameters[1]; // Shorthand for "this->mParameter("Mean Delta");"
 
-    // The next two lines define the ODE system by Collier et al. (1996)
-    // rDY[0] = mean_delta*mean_delta/(0.01 + mean_delta*mean_delta) - notch;  // d[Notch]/dt
-    // rDY[1] = 1.0/(1.0 + 1000.0*notch*notch) - delta;   
+    // The next three lines define the ODE system by Sprinzak et al. (2011)
     rDY[0] = 100.0 - notch - notch*mean_delta;  // d[Notch]/dt
     rDY[1] = 100.0/(1.0 + reporter) - delta - delta*mean_notch;   // d[Delta]/dt
     rDY[2] = 1000000.0*notch*mean_delta*notch*mean_delta*notch*mean_delta/(300000.0 + notch*mean_delta*notch*mean_delta*notch*mean_delta) - reporter;   // d[Reporter]/dt

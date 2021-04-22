@@ -44,11 +44,11 @@ OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "AbstractOdeSystem.hpp"
 
-/**
- * Represents the Delta-Notch ODE system described by Collier et al,
- * "Pattern formation by lateral inhibition with feedback: a mathematical
- * model of delta-notch intercellular signalling" (Journal of Theoretical
- * Biology 183:429-446, 1996).
+/*
+ * Represents the Delta-Notch-Reporter ODE system described by Sprinzak et al. (2011)
+ * "Mutual Inactivation of Notch Receptors and Ligands Facilitates Developmental Patterning"
+ * PLoS Comput Biol 7(6): e1002069. https://doi.org/10.1371/journal.pcbi.1002069
+ * This system of ODEs incorporates Delta-Notch-Reporter without mutual inactivation.
  */
 class DeltaNotchReporterOdeSystemLi : public AbstractOdeSystem
 {
@@ -84,7 +84,7 @@ public:
     ~DeltaNotchReporterOdeSystemLi();
 
     /**
-     * Compute the RHS of the  Sprinzak et al. system of SLIMI ODEs (2011).
+     * Compute the RHS of the  Sprinzak et al. system of LI ODEs (2011).
      *
      * Returns a vector representing the RHS of the ODEs at each time step, y' = [y1' ... yn'].
      * An ODE solver will call this function repeatedly to solve for y = [y1 ... yn].
