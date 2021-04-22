@@ -84,7 +84,7 @@ public:
     ~DeltaNotchReporterProtrusionOdeSystemLimi();
 
     /**
-     * Compute the RHS of the  Sprinzak et al. system of SLIMI ODEs (2011).
+     * Compute the RHS of the  Sprinzak et al. system of LIMI ODEs (2011).
      *
      * Returns a vector representing the RHS of the ODEs at each time step, y' = [y1' ... yn'].
      * An ODE solver will call this function repeatedly to solve for y = [y1 ... yn].

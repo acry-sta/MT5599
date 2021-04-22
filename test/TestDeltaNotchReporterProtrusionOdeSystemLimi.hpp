@@ -165,7 +165,8 @@ public:
             TS_ASSERT_DELTA(mean_notch, 1.0, 1e-3);
             TS_ASSERT_DELTA(mean_delta, 10.0, 1e-3);
 
-            TS_ASSERT_DELTA(protrusion_length, 3.0, 1e-3);
+            // check that this matches the current parameters
+            TS_ASSERT_DELTA(protrusion_length, 2.0, 1e-3);
             TS_ASSERT_DELTA(protrusion_angular_opening, 0.5*M_PI, 1e-3);
 
             // Get state variables
