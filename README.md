@@ -1,14 +1,21 @@
-# A template user project for use with Chaste.
+# Models of cell-cell interactions in biological tissues
 
-**Note - you probably *don't* want to fork this on Github!**
-If you do it will stay linked to this repository, and then you won't be allowed to fork any more similar projects!
+## Anita Youngblood - 160003606 - acry@st-andrews.ac.uk
+## Supervisor: Jochen Kursawe
 
-Instead, select `Import repository` from the `+` menu at the top right of this page whilst logged in to your GitHub account.
+Code for MT5599 project on Delta/Notch interactions in biological tissues. 
 
-Paste:
+Main models used are found in 
+- TestDeltaNotchReporterLimiPrepattern.hpp 
+(This uses Sprinzak et al.'s three-substance system of ODEs and incorporates the possibility of a prepattern. 
+ Suggested initial conditions are included and can be commented in/out to choose the prepattern.)
+- TestDeltaNotchReporterProtrusionLimi.hpp
+(This uses Sprinzak et al. and Hunter et al.'s three-substance system of ODEs and incorporates the possibility of signalling through cellular protrusions.
+ Protrusions are parameterised in DeltaNotchReporterProtrusionOdeSystemLimi.cpp by length, tip length, angle, and angular opening.)
+- TestDeltaNotchReporterProtrusionLimiDivisionReporterDependent.hpp
+(This uses Sprinzak et al.'s three-substance system of ODEs and incorporates the possibility of signalling through cellular protrusions as well as Notch-dependent cell
+ division. Protrusions are parameterised in DeltaNotchReporterProtrusionOdeSystemLimi.cpp by length, tip length, angle, and angular opening.
+ Division probability at each time-step is calculated based on Reporter expression using a Hill function with parameters specified in ReporterDependentCellCycleModel.cpp)
 
-    https://github.com/Chaste/template_project.git
+These can be implemented in the usual manner, for example using the Chaste docker (https://github.com/Chaste/chaste-docker)
 
-as the location, give it a personalised name, and click `Begin import`.  This operation should only take a few seconds.
-
-Then see the [User Projects](https://chaste.cs.ox.ac.uk/trac/wiki/ChasteGuides/UserProjects) guide page on the Chaste wiki for more information.
